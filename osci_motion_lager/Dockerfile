@@ -1,15 +1,24 @@
-# Wir nutzen ein minimalistisches Nginx-Image
-FROM nginx:stable-alpine
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
-# Verzeichnisse für die Webseite erstellen
-WORKDIR /usr/share/nginx/html
+# Installiere Nginx
+RUN apk add --no-cache nginx
+
+# Verzeichnisse anlegen
+WORKDIR /www
+RUN mkdir -p /etc/nginx/http.d/
 
 # Alle Dateien kopieren
-COPY index.html .
-COPY header.png .
-COPY footer.png .
+COPY index.html /www/index.html
+COPY header.png /www/header.png
+COPY footer.png /www/footer.png
+COPY run.sh /run.sh
 
-# Nginx Konfiguration anpassen (Port 8099 für HA Ingress)
-RUN sed -i 's/listen  80;/listen 8099;/g' /etc/nginx/conf.d/default.conf
+# Rechte vergeben
+RUN chmod a+x /run.sh
 
-# Keine run.sh mehr nötig, Nginx startet automatisch
+# Nginx Konfiguration (Port 8099 ist Standard für HA Ingress)
+RUN echo 'server { listen 8099 default_server; root /www; index index.html; location / { try_files $uri $uri/ =404; } }' > /etc/nginx/http.d/default.conf
+
+# Start-Skript ausführen
+CMD [ "/run.sh" ]
