@@ -1,13 +1,23 @@
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
+# Installiere Nginx
 RUN apk add --no-cache nginx
 
-COPY index.html wwwindex.html
-COPY run.sh 
-RUN chmod a+x run.sh
+# Arbeitsverzeichnis für Web-Dateien
+WORKDIR /www
 
-# Nginx Konfiguration direkt erstellen
-RUN echo 'server { listen 8099 default_server; root www; index index.html; location  { try_files $uri $uri =404; } }'  etcnginxhttp.ddefault.conf
+# Kopiere die Dateien (Achtung: Dateinamen müssen exakt stimmen!)
+COPY index.html /www/index.html
+COPY header.png /www/header.png
+COPY footer.png /www/footer.png
+COPY run.sh /run.sh
 
-CMD [ run.sh ]
+# Berechtigungen setzen
+RUN chmod a+x /run.sh
+
+# Nginx Konfiguration erstellen
+RUN mkdir -p /etc/nginx/http.d/
+RUN echo 'server { listen 8099 default_server; root /www; index index.html; location / { try_files $uri $uri/ =404; } }' > /etc/nginx/http.d/default.conf
+
+CMD [ "/run.sh" ]
