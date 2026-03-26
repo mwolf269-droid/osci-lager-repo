@@ -1,7 +1,7 @@
 name: "Osci-Motion Lagerverwaltung"
 slug: "osci_motion_lager"
 description: "Bestandsverwaltung für Osci-Motion Produkte"
-version: "1.1.2"
+version: "1.1.3"
 arch:
   - aarch64
   - amd64
@@ -10,5 +10,6 @@ arch:
 panel_icon: "mdi:flask-outline"
 panel_title: "Osci-Lager"
 ingress: true
+ingress_port: 8099        # <--- DIESE ZEILE IST WICHTIG
 init: false
 startup: application
