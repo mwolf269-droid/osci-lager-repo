@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Osci-Motion Lagerverwaltung</title>
+    <style>
+        :root { --primary: #00d2ff; --bg: #121212; --card: #1e1e1e; --text: #ffffff; --border: #333; --success: #00ff88; --danger: #ff4b2b; --cat-bg: #2a2a2a; --info: #2196F3; --warn-bg: #2a1b1b; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; position: relative; }
+        .header-container { width: 100%; max-width: 600px; text-align: center; margin-bottom: 10px; }
+        .banner-img { width: 100%; height: auto; filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.3)); }
+        .footer-container { width: 100%; max-width: 400px; text-align: center; margin-top: 10px; padding-bottom: 20px; opacity: 0.8; }
+        .footer-img { width: 80%; height: auto; }
+        .card { background: var(--card); padding: 15px; border-radius: 15px; width: 100%; max-width: 850px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); box-sizing: border-box; position: relative; }
+        .status-header { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 12px; }
+        .status-bar { font-size: 0.75rem; color: var(--success); font-weight: bold; margin: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        .cat-row td { background: var(--cat-bg); color: var(--primary); font-weight: bold; padding: 12px 10px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .prod-row td { padding: 12px 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        .prod-link { color: var(--text); text-decoration: none; font-weight: bold; font-size: 1rem; cursor: pointer; }
+        .shop-btn { font-size: 0.65rem; color: #888; text-decoration: none; border: 1px solid #444; padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        .stock-val { font-weight: bold; color: var(--primary); font-size: 1.1rem; }
+        .avg-info { font-size: 0.75rem; color: #888; display: block; margin-top: 2px; }
+        .low-stock { color: var(--danger) !important; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .history-row { display: none; background: #161616; }
+        .history-container { padding: 15px; display: flex; gap: 8px; flex-wrap: wrap; border-bottom: 2px solid var(--primary); }
+        .history-item { background: #333; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; border: 1px solid #444; }
+        .action-group { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        select, input { padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: #252525; color: white; font-size: 0.9rem; outline: none; }
+        .btn-sm { border: none; padding: 10px 14px; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
+        .btn-plus { background: var(--success); }
+        .btn-minus { background: var(--danger); }
+        .mini-input { width: 60px; text-align: center; }
+        @media (max-width: 650px) {
+            thead { display: none; }
+            .prod-row { display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "name stand" "zukauf entnahme"; padding: 15px 5px; gap: 12px; border-bottom: 2px solid #2a2a2a; }
+            .prod-row td { display: block; padding: 0; border: none; }
+            .td-name { grid-area: name; }
+            .td-stand { grid-area: stand; text-align: right; }
+            .td-zukauf { grid-area: zukauf; border-top: 1px solid #2a2a2a; padding-top: 10px !important; }
+            .td-entnahme { grid-area: entnahme; border-top: 1px solid #2a2a2a; padding-top: 10px !important; }
+            .td-entnahme .action-group { justify-content: flex-end; }
+        }
+        .collapsible-bar { background: #252525; color: var(--primary); cursor: pointer; padding: 15px; width: 100%; max-width: 850px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 15px; box-sizing: border-box; transition: margin-bottom 0.3s; }
+        .collapsible-bar.active { margin-bottom: 0; border-radius: 12px 12px 0 0; }
+        .content { padding: 0 15px; display: none; background: var(--card); border-radius: 0 0 12px 12px; width: 100%; max-width: 850px; box-sizing: border-box; border: 1px solid #252525; margin-bottom: 20px; }
+        .manual-text { padding: 20px 5px; font-size: 0.92rem; color: #ddd; line-height: 1.6; }
+        .manual-text h3 { color: var(--primary); margin-top: 25px; font-size: 1.1rem; border-bottom: 1px solid #444; padding-bottom: 8px; }
+        .disclaimer-bottom { background: var(--warn-bg); border-left: 4px solid var(--danger); padding: 12px; border-radius: 8px; margin: 30px 0 10px 0; color: #ffcccc; font-size: 0.85rem; }
+        .btn-info-circle { background: var(--info); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-weight: bold; font-size: 0.8rem; line-height: 22px; text-align: center; }
+        .density-info-box { background: #1e3a5f; border-left: 4px solid var(--info); padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.85rem; display: none; }
+        .density-table { width: 100%; margin-top: 10px; font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .density-table td { padding: 4px 0; color: #ccc; }
+        .version-text { font-size: 0.7rem; color: #555; margin-top: 20px; text-align: center; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="header-container">
+        <img src="./header.png" class="banner-img" alt="Osci-Motion Lagerverwaltung">
+    </div>
+
+    <div class="collapsible-bar" onclick="toggleColl(this)">
+        <div style="font-weight:bold;">📖 Benutzerhandbuch & Hilfe</div>
+        <span class="toggle-icon">+</span>
+    </div>
+    <div class="content">
+        <div class="manual-text">
+            <p>Willkommen in Ihrer digitalen Bestandsverwaltung. Dieses Tool hilft Ihnen, den Überblick über Ihre Aquaristik-Lösungen zu behalten.</p>
+            <h3>📦 Bestandsverwaltung</h3>
+            <ul>
+                <li><strong>Zukauf (+):</strong> Größe wählen und aufs <strong>grüne Plus</strong> klicken.</li>
+                <li><strong>Entnahme (-):</strong> Menge eingeben und aufs <strong>rote Minus</strong> klicken.</li>
+                <li><strong>Logbuch:</strong> Klicken Sie auf den <strong>Produktnamen</strong>, um das Log aufzuklappen.</li>
+                <li><strong>Warnung:</strong> Die Zahl blinkt <strong>Rot</strong> (⚠️), wenn der Bestand für die nächste Dosis nicht mehr reicht.</li>
+            </ul>
+            <h3>⚖️ Wiegestation</h3>
+            <ul>
+                <li>Nutzen Sie die <strong>Messstation</strong> ganz unten, um angebrochene Flaschen exakt zu erfassen. Das System zieht das Tara automatisch ab.</li>
+            </ul>
+            <div class="disclaimer-bottom">
+                <strong>⚠️ Rechtlicher Hinweis:</strong><br>
+                Dieser Rechner steht in keinerlei Verbindung mit der Firma <strong>Osci-Motion</strong>. Er ist ein privates Werkzeug und dient rein dem persönlichen Überblick.
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="status-header"><div id="status" class="status-bar">Verbinde...</div></div>
+        <table id="stockTable">
+            <thead>
+                <tr>
+                    <th style="text-align:left; padding:10px;">Produkt</th>
+                    <th style="text-align:right; padding:10px;">Stand / Ø</th>
+                    <th style="text-align:left; padding:10px;">Zukauf (+)</th>
+                    <th style="text-align:right; padding:10px;">Entnahme (-)</th>
+                </tr>
+            </thead>
+            <tbody id="stockBody"></tbody>
+        </table>
+    </div>
+
+    <div class="collapsible-bar" onclick="toggleColl(this)">
+        <div style="font-weight:bold;">⚖️ Messstation (Wiegen)</div>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <button class="btn-info-circle" style="background:#2196F3;" onclick="event.stopPropagation(); toggleDensityInfo()">i</button>
+            <span class="toggle-icon">+</span>
+        </div>
+    </div>
+    <div class="content">
+        <div id="densityInfoBox" class="density-info-box"><strong>💡 Dichte-Daten:</strong><table class="density-table" id="densityTableBody"></table></div>
+        <div style="display: flex; flex-direction: column; gap: 12px; padding: 20px 0;">
+            <select id="prodSelect" onchange="calculate()"></select>
+            <div style="display: flex; gap: 10px;">
+                <select id="gebindeSelect" style="flex:1;" onchange="calculate()">
+                    <option value="9.3">30 ml (9,3g)</option>
+                    <option value="18.5">100 ml (18,5g)</option>
+                    <option value="57" selected>1 L (57g)</option>
+                    <option value="260">5 L (260g)</option>
+                    <option value="440">10 L (440g)</option>
+                </select>
+                <input type="number" id="weightInput" style="flex:1;" placeholder="Gramm" oninput="calculate()">
+            </div>
+            <div id="calcResult" style="text-align:center; font-weight:bold; font-size: 2rem; color: var(--primary); padding:10px;">0</div>
+            <button style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%); color: white; border: none; padding: 16px; border-radius: 10px; cursor: pointer; font-weight: bold;" onclick="updateStock()">BESTAND ÜBERSCHREIBEN</button>
+        </div>
+    </div>
+
+    <div class="collapsible-bar" onclick="toggleColl(this)">
+        <div style="font-weight:bold;">🛠️ Changelog</div>
+        <span class="toggle-icon">+</span>
+    </div>
+    <div class="content">
+        <div class="manual-text">
+            <div style="padding:10px 0;"><span style="color:var(--primary); font-weight:bold;">v1.0.0</span><span style="color:#888; font-size:0.8rem; margin-left:10px;">26.03.2026</span>
+                <ul style="margin-top:10px;"><li>Offizielle Erstveröffentlichung.</li><li>Home Assistant Datenbank-Synchronisierung.</li><li>Ø Verbrauchs-Tracking.</li></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="version-text">v1.0.0 release 26.03.2026</div>
+    <div class="footer-container"><img src="./footer.png" class="footer-img" alt="Designed by m!nc3rR333F"></div>
+
+<script>
+    // AUTOMATISCHE ERKENNUNG DER HA INSTANZ
+    const HA_URL = window.location.origin;
+    let HA_TOKEN = localStorage.getItem('osci_lager_token');
+
+    if(!HA_TOKEN) {
+        HA_TOKEN = prompt("Bitte gib deinen Home Assistant 'Langlebigen Zugriffs-Token' ein:");
+        if(HA_TOKEN) localStorage.setItem('osci_lager_token', HA_TOKEN);
+    }
+
+    const productStructure = {
+        "Traces - Anion": { "Fluor (F)": { d: 1.009, u: "ml", l: "https://osci-motion.de/product/trace-elements-flour/", s: [1000] }, "Jod (I)": { d: 1.097, u: "ml", l: "https://osci-motion.de/product/trace-elements-iod/", s: [30, 100] }, "Vanadium (V)": { d: 1.026, u: "ml", l: "https://osci-motion.de/product/trace-elements-vanadium/", s: [30, 100] }, "Selen (Se)": { d: 1.010, u: "ml", l: "https://osci-motion.de/product/trace-elements-selen/", s: [100] } },
+        "Traces - Kation": { "Cobalt (Co)": { d: 1.000, u: "ml", l: "https://osci-motion.de/product/trace-elements-cobalt/", s: [1000] }, "Nickel (Ni)": { d: 0.999, u: "ml", l: "https://osci-motion.de/product/trace-elements-nickel/", s: [1000] }, "Eisen (Fe)": { d: 1.039, u: "ml", l: "https://osci-motion.de/product/trace-elements-eisen/", s: [100] }, "Mangan (Mn)": { d: 1.234, u: "ml", l: "https://osci-motion.de/product/trace-elements-mangan/", s: [30, 100] }, "Kupfer (Cu)": { d: 1.024, u: "ml", l: "https://osci-motion.de/product/trace-elements-kupfer/", s: [30, 100] }, "Chrom (Cr)": { d: 1.047, u: "ml", l: "https://osci-motion.de/product/trace-elements-chrom/", s: [30, 100] }, "Zink (Zn)": { d: 1.024, u: "ml", l: "https://osci-motion.de/product/trace-elements-zink/", s: [100] } },
+        "Custom & Repair": { "Natriumchlorid (NaCl)": { d: 1.192, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-natriumchlorid/", s: [5000, 10000] }, "Magnesiumchlorid (MgCl2)": { d: 1.289, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-magnesiumchlorid/", s: [1000, 5000] }, "Natriumsulfat (Na2SO4)": { d: 1.110, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-natriumsulfat/", s: [5000] }, "Magnesiumsulfat (MgSO4)": { d: 1.224, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-magnesiumsulfat/", s: [1000, 5000] }, "Kaliumchlorid (KCl)": { d: 1.112, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-kaliumchlorid/", s: [1000, 5000] }, "Kaliumsulfat (K2SO4)": { d: 1.067, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-kaliumsulfat-k2so4/", s: [1000, 5000] }, "Kaliumbromid (KBr)": { d: 1.104, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-kaliumbromid/", s: [1000, 5000] }, "Strontiumchlorid (SrCl2)": { d: 1.154, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-strontiumchlorid-2/", s: [100, 1000] }, "Calciumchlorid (CaCl2)": { d: 1.399, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-calciumchlorid/", s: [1000, 5000] }, "Natriumfluorid (NaF)": { d: 1.009, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-natriumflourid/", s: [5000] }, "Bor (B)": { d: 0.999, u: "ml", l: "https://osci-motion.de/product/custom-repair-elements-bor/", s: [1000, 5000] } },
+        "Makro Elements": { "KH Tag (KHT)": { d: 1.030, u: "ml", l: "https://osci-motion.de/product/makro-elements-kh-tag/", s: [10000] }, "KH Nacht (KHN)": { d: 1.030, u: "ml", l: "https://osci-motion.de/product/makro-elements-kh-nacht/", s: [5000] }, "Calcium (Ca)": { d: 1.100, u: "ml", l: "https://osci-motion.de/product/makro-elements-calcium/", s: [5000] }, "Magnesium (Mg)": { d: 1.100, u: "ml", l: "https://osci-motion.de/product/makro-elements-magnesium/", s: [5000] } },
+        "Nutrition Elements": { "Lanthan (La)": { d: 1.020, u: "ml", l: "https://osci-motion.de/product/nutrition-elements-lanthan/", s: [1000] }, "Phosphor (P)": { d: 1.010, u: "ml", l: "https://osci-motion.de/product/nutrition-elements-phosphat/", s: [1000] }, "Stickstoff (N)": { d: 1.010, u: "ml", l: "https://osci-motion.de/product/nutrition-elements-stickstoff/", s: [1000] }, "Kohlenstoff (C)": { d: 1.010, u: "ml", l: "https://osci-motion.de/product/nutrition-elements-kohlenstoff/", s: [1000] } },
+        "Sonstiges": { "KH Reagenz": { d: 1.000, u: "ml", l: "https://osci-motion.de/product/salzsaeure-01-mol-l-kh-reagenz/", s: [5000] }, "Mischbettharz": { d: 1.000, u: "g", l: "https://osci-motion.de/product/resin-pro/", s: [2960] }, "ICP Ocean Check": { d: 1.000, u: "Stk", l: "https://osci-motion.de/product/ocean-check/", s: [1, 4, 8] }, "ICP Ocean Check Pro": { d: 1.000, u: "Stk", l: "https://osci-motion.de/product/ocean-check-pro/", s: [1, 4, 8] } }
+    };
+
+    let stockData = {};
+    function toggleColl(el) { el.classList.toggle("active"); let c = el.nextElementSibling; let i = el.querySelector('.toggle-icon'); let o = c.style.display === "block"; c.style.display = o ? "none" : "block"; if(i) i.innerText = o ? "+" : "-"; }
+    function toggleDensityInfo() { let b = document.getElementById("densityInfoBox"); b.style.display = b.style.display === "block" ? "none" : "block"; }
+    
+    const pSelect = document.getElementById('prodSelect');
+    const dTable = document.getElementById('densityTableBody');
+    for (const cat in productStructure) {
+        let group = document.createElement('optgroup'); group.label = cat;
+        dTable.innerHTML += `<tr><td colspan="2" style="color:var(--primary); font-weight:bold; padding-top:10px;">${cat}</td></tr>`;
+        for (const p in productStructure[cat]) {
+            const pData = productStructure[cat][p];
+            if (!["Mischbettharz", "ICP Ocean Check", "ICP Ocean Check Pro"].includes(p)) {
+                let opt = document.createElement('option'); opt.value = p; opt.innerText = p; group.appendChild(opt);
+                dTable.innerHTML += `<tr><td>${p}</td><td style="text-align:right; color:#ccc;">${pData.d.toFixed(3)} g/ml</td></tr>`;
+            } else { dTable.innerHTML += `<tr><td>${p}</td><td style="text-align:right; color:#ccc;">n/a</td></tr>`; }
+        }
+        if (group.children.length > 0) pSelect.appendChild(group);
+    }
+
+    async function loadFromDB() {
+        try {
+            const res = await fetch(`${HA_URL}/api/states/sensor.osci_motion_db`, { headers: { "Authorization": `Bearer ${HA_TOKEN}`, "Content-Type": "application/json" } });
+            const data = await res.json();
+            let raw = (data.attributes && data.attributes.lager) ? data.attributes.lager : {};
+            for (let p in raw) { stockData[p] = typeof raw[p] === 'number' ? { qty: raw[p], h: [] } : raw[p]; }
+            document.getElementById('status').innerText = "● Synchronisiert";
+            renderTable();
+        } catch (e) { document.getElementById('status').innerText = "● Fehler (Token?)"; }
+    }
+
+    async function saveToDB() {
+        await fetch(`${HA_URL}/api/states/sensor.osci_motion_db`, { method: "POST", headers: { "Authorization": `Bearer ${HA_TOKEN}`, "Content-Type": "application/json" }, body: JSON.stringify({ state: "online", attributes: { lager: stockData, friendly_name: "Osci-Motion Lager", icon: "mdi:database" }}) });
+        renderTable();
+    }
+
+    function calculate() {
+        const pData = getProdData(pSelect.value);
+        const res = Math.round((parseFloat(document.getElementById('weightInput').value) || 0 - parseFloat(document.getElementById('gebindeSelect').value)) / pData.d);
+        document.getElementById('calcResult').innerText = (res > 0 ? res : 0) + " " + pData.u;
+        return res > 0 ? res : 0;
+    }
+
+    function updateStock() { stockData[pSelect.value].qty = calculate(); saveToDB(); }
+    function addVolume(p) { stockData[p].qty += parseFloat(document.getElementById('add-' + p).value); saveToDB(); }
+    function removeAmount(p) {
+        let val = parseFloat(document.getElementById('rem-' + p).value) || 0;
+        if(val > 0) {
+            stockData[p].qty = Math.max(0, stockData[p].qty - val);
+            if (!stockData[p].h) stockData[p].h = [];
+            stockData[p].h.push(val); if (stockData[p].h.length > 5) stockData[p].h.shift();
+            document.getElementById('rem-' + p).value = ""; saveToDB();
+        }
+    }
+    function deleteHistoryItem(p, index) { stockData[p].h.splice(index, 1); saveToDB(); }
+    function toggleHistory(p) { let el = document.getElementById('hist-row-' + p.replace(/\s+/g, '-').replace(/[()]/g, '')); if (el) el.style.display = (el.style.display === 'table-row') ? 'none' : 'table-row'; }
+    function getProdData(name) { for (const cat in productStructure) { if (productStructure[cat][name]) return productStructure[cat][name]; } return { d: 1, u: "ml", s: [1000] }; }
+
+    function renderTable() {
+        const body = document.getElementById('stockBody'); body.innerHTML = "";
+        for (const cat in productStructure) {
+            body.innerHTML += `<tr class="cat-row"><td colspan="4">${cat}</td></tr>`;
+            for (const p in productStructure[cat]) {
+                const pData = productStructure[cat][p]; const data = stockData[p] || { qty: 0, h: [] };
+                const safeId = p.replace(/\s+/g, '-').replace(/[()]/g, ''); 
+                let avg = 0; if (data.h && data.h.length > 0) avg = (data.h.reduce((a, b) => a + b, 0) / data.h.length).toFixed(1);
+                let isWarning = (avg > 0 && data.qty < parseFloat(avg));
+                let zukaufHTML = pData.s.length > 1 ? `<select id="add-${p}" class="mini-select">${pData.s.map(sz => `<option value="${sz}">${sz} ${pData.u}</option>`).join('')}</select>` : `<span style="font-size:0.8rem;color:#888;">${pData.s[0]} ${pData.u}</span><input type="hidden" id="add-${p}" value="${pData.s[0]}">`;
+                body.innerHTML += `<tr class="prod-row" onclick="if(!['BUTTON','INPUT','SELECT','A','SPAN'].includes(event.target.tagName)) toggleHistory('${p}')">
+                    <td class="td-name"><div class="prod-title-cell"><span class="prod-link">${p}</span><a href="${pData.l}" target="_blank" class="shop-btn" onclick="event.stopPropagation()">Shop</a></div></td>
+                    <td class="td-stand"><span class="stock-val ${isWarning ? 'low-stock' : ''}">${data.qty} ${pData.u} ${isWarning ? '⚠️' : ''}</span><span class="avg-info">${avg > 0 ? 'Ø ' + avg : '-'}</span></td>
+                    <td class="td-zukauf"><div class="action-group">${zukaufHTML}<button class="btn-sm btn-plus" onclick="event.stopPropagation(); addVolume('${p}')">+</button></div></td>
+                    <td class="td-entnahme"><div class="action-group"><input type="number" id="rem-${p}" class="mini-input" onclick="event.stopPropagation()" placeholder="0"><button class="btn-sm btn-minus" onclick="event.stopPropagation(); removeAmount('${p}')">−</button></div></td>
+                </tr><tr id="hist-row-${safeId}" class="history-row" style="display:none;"><td colspan="4"><div class="history-container"><strong>Logs:</strong> ${(data.h && data.h.length > 0) ? data.h.map((v, i) => `<div class="history-item">${v} ${pData.u} <button style="background:none;border:none;color:#ff4b2b;cursor:pointer;" onclick="deleteHistoryItem('${p}', ${i})">×</button></div>`).join('') : "Keine Logs"}</div></td></tr>`;
+            }
+        }
+    }
+    loadFromDB();
+</script>
+</body>
+</html>
