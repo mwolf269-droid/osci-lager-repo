@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <style>
         /* Spezifische Handbuch-Styles */
-        .manual-card { background: var(--card); padding: 30px; border-radius: 20px; width: 100%; max-width: 800px; border: 1px solid #2a2a2a; margin-top: 10px; line-height: 1.7; }
+        .manual-card { background: var(--card); padding: 30px; border-radius: 20px; width: 100%; max-width: 800px; border: 1px solid #2a2a2a; margin-top: 10px; line-height: 1.7; box-sizing: border-box; }
         h1 { color: var(--primary); font-size: 1.8rem; margin-bottom: 5px; text-align: center; }
         .subtitle { text-align: center; color: #888; margin-bottom: 30px; font-style: italic; font-size: 0.9rem; }
         h2 { color: var(--primary); border-left: 4px solid var(--primary); padding-left: 15px; margin-top: 35px; font-size: 1.3rem; background: rgba(0, 210, 255, 0.05); padding-top: 5px; padding-bottom: 5px; }
@@ -15,8 +15,21 @@
         li { margin-bottom: 12px; position: relative; padding-left: 25px; }
         li::before { content: '▹'; position: absolute; left: 0; color: var(--primary); font-weight: bold; }
         .hl { color: var(--primary); font-weight: bold; }
+        
         .warn-box { background: rgba(255, 75, 43, 0.1); border: 1px solid #ff4b2b; padding: 15px; border-radius: 10px; color: #ffcccc; margin: 20px 0; }
-        .feature-item { background: #1f1f1f; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-top: 15px; }
+        
+        /* BILD-FIX: Damit nichts übersteht */
+        .feature-item { background: #1f1f1f; padding: 20px; border-radius: 12px; border: 1px solid #333; margin-top: 15px; overflow: hidden; box-sizing: border-box; }
+        .feature-item img { 
+            max-width: 100%; 
+            height: auto; 
+            display: block; 
+            border-radius: 8px; 
+            border: 1px solid #444; 
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
         .bug-section { background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(103, 58, 183, 0.1)); border: 1px solid var(--primary); padding: 20px; border-radius: 15px; margin-top: 40px; text-align: center; }
     </style>
 </head>
@@ -26,11 +39,11 @@
     
     <!-- EINHEITLICHE NAVIGATION -->
     <nav class="top-nav">
-        <a href="index.html" class="nav-link">📦 Lager</a>
-        <a href="stats.html" class="nav-link">📈 Statistik</a>
-        <a href="import.html" class="nav-link">📊 Import</a>
-        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
         <a href="handbuch.html" class="nav-link active">📖 Hilfe</a>
+        <a href="stats.html" class="nav-link">📈 Statistik</a>
+        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
+        <a href="import.html" class="nav-link">📊 Import</a>
+        <a href="index.html" class="nav-link">📦 Lager</a>
         <a href="changelog.html" class="nav-link">🛠️ Logs</a>
     </nav>
 
@@ -43,14 +56,14 @@
         <h2>📦 Das digitale Regal (Dashboard)</h2>
         <p>Im Lager behältst du die volle Kontrolle über alle Zusätze:</p>
         <ul>
-            <li><span class="hl">Zukauf (+):</span> Ein Klick auf das grüne Plus lässt dich vordefinierte Gebindegrößen (z.B. 1000ml) sofort hinzufügen.</li>
+            <li><span class="hl">Zukauf (+):</span> Ein Klick auf das grüne Plus lässt dich vordefinierte Gebindegrößen sofort hinzufügen.</li>
             <li><span class="hl">Entnahme (-):</span> Über das rote Minus gibst du individuelle Mengen ab. Das System berechnet den Restbestand in Echtzeit.</li>
             <li><span class="hl">ICP-Ninja:</span> Ocean Checks ziehst du per Klick sofort ab. Schnell und unkompliziert.</li>
-            <li><span class="hl">Prognose:</span> Kleine Pfeile (↑ ↓ →) zeigen dir direkt neben dem Bestand, ob dein Verbrauch im Vergleich zur letzten Dosierung steigt oder sinkt.</li>
+            <li><span class="hl">Prognose:</span> Kleine Pfeile (↑ ↓ →) zeigen dir die Tendenz deines Verbrauchs an.</li>
         </ul>
 
         <div class="warn-box">
-            <strong>Intelligente Warnung:</strong> Wenn ein Wert <span class="hl">rot blinkt</span>, reicht dein Vorrat statistisch gesehen für weniger als 5 deiner typischen Dosierungen aus. Zeit für Nachschub!
+            <strong>Intelligente Warnung:</strong> Wenn ein Wert <span class="hl">rot blinkt</span>, reicht dein Vorrat statistisch gesehen für weniger als 5 deiner typischen Dosierungen aus.
         </div>
 
         <h2>📊 Der Import-Assistent</h2>
@@ -58,26 +71,26 @@
         
         <div class="feature-item">
             <h3>🛠️ Custom & Repair (Osci-Motion)</h3>
-            <p>Importiere einfach die Daten wie auf dem Bild, um deinen Verbrauch der Custom & Repair Lösung zu dokumentieren. Kopiere dazu die Ergebnistabelle (Namen und ml-Werte) aus dem Rechner.</p>
+            <p>Importiere einfach die Daten wie auf dem Bild unten, um deinen Verbrauch der Custom & Repair Lösung zu dokumentieren. Kopiere dazu die Ergebnistabelle (Namen und ml-Werte) aus dem Rechner.</p>
             <img src="import cr osci.png" alt="Osci Import">
         </div>
 
         <div class="feature-item">
             <h3>📱 ReefManager App (OCR-Import)</h3>
-            <p>Du kannst aus der <span class="hl">ReefManager App</span> per Screenshot die Werte als "Text" kopieren und importieren. Nutze dazu die Texterkennung (OCR) deines Smartphones auf dem Screenshot deiner Dosierwerte.</p>
+            <p>Du kannst aus der <span class="hl">ReefManager App</span> per Screenshot die Werte als "Text" kopieren. Nutze dazu die Texterkennung (OCR) deines Smartphones auf dem Screenshot deiner Dosierwerte.</p>
             <img src="Import RM.png" alt="ReefManager Import">
         </div>
 
         <ul style="margin-top: 20px;">
-            <li><span class="hl">Der Jod-Fix:</span> Da das Kürzel "I" (Jod) beim Kopieren oft als "1" erkannt wird, korrigiert die App dies automatisch und ordnet die Menge korrekt zu.</li>
+            <li><span class="hl">Der Jod-Fix:</span> Da das Kürzel "I" oft als "1" erkannt wird, korrigiert die App dies automatisch.</li>
         </ul>
 
         <h2>⚖️ Das Labor (Messstation)</h2>
         <p>Nutze die Physik für 100% Präzision:</p>
         <ul>
-            <li>Wähle dein Produkt und die Flaschengröße (z.B. 1L Flasche) aus.</li>
+            <li>Wähle dein Produkt und die Flaschengröße aus.</li>
             <li>Stelle die Flasche auf eine Waage und gib das Gewicht in Gramm ein.</li>
-            <li>Die App zieht das Leergewicht (<span class="hl">Tara</span>) der Flasche ab, berechnet über die <span class="hl">Dichte</span> den ml-Stand und überschreibt deinen Lagerbestand exakt.</li>
+            <li>Die App berechnet über die <span class="hl">Dichte</span> den exakten ml-Stand.</li>
         </ul>
 
         <div class="bug-section">
@@ -86,7 +99,7 @@
             <a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" style="color:var(--primary); font-weight:bold; text-decoration: underline;">
                 Bug oder Feature auf GitHub melden
             </a>
-            <p style="margin-top: 15px; font-size: 0.7rem; color: #666;">Version 1.2.0 | Handbuch Stand: März 2026</p>
+            <p style="margin-top: 15px; font-size: 0.7rem; color: #666;">Version 1.0.1 | Handbuch Stand: März 2026</p>
         </div>
     </div>
 
