@@ -1,17 +1,14 @@
 const ui = {
-    // Öffnet/Schließt die Sektionen
     toggleColl(el) { 
         el.classList.toggle("active"); 
         let c = el.nextElementSibling; 
         if (c) c.style.display = (c.style.display === "block") ? "none" : "block"; 
     },
 
-    // Schließt alle Modal-Fenster
     closeModals() { 
         document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = "none"); 
     },
 
-    // Zeigt die Zusammenfassung nach einem Import
     showImportSummary(items) {
         const list = document.getElementById('importSummaryList');
         if (!list) return;
@@ -27,7 +24,6 @@ const ui = {
         document.getElementById('importSummaryModal').style.display = "flex";
     },
 
-    // Modal für Zukauf (+)
     openAddModal(p) {
         const pD = this.getProdData(p);
         document.getElementById('addModalTitle').innerText = p;
@@ -43,8 +39,9 @@ const ui = {
         document.getElementById('addModal').style.display = "flex";
     },
 
-    // Modal für Entnahme (-)
     openRemModal(p) {
+        console.log("Öffne Entnahme für:", p); // Debug-Info für die Konsole
+        
         // ICP SPEZIAL: Sofort 1 Stück abziehen
         if (p.toLowerCase().includes("icp")) { 
             core.removeAmt(p, 1); 
@@ -52,25 +49,40 @@ const ui = {
         }
         
         const pD = this.getProdData(p);
-        document.getElementById('remModalTitle').innerText = p;
-        document.getElementById('modalUnit').innerText = pD.u;
-        const input = document.getElementById('remInput'); 
+        const modal = document.getElementById('remModal');
+        const input = document.getElementById('remInput');
+        const title = document.getElementById('remModalTitle');
+        const unitLabel = document.getElementById('modalUnit');
+        const confirmBtn = document.getElementById('remConfirmBtn');
+
+        if (!modal || !input || !confirmBtn) {
+            console.error("Modal-Elemente nicht gefunden!");
+            return;
+        }
+
+        title.innerText = p;
+        unitLabel.innerText = pD.u;
         input.value = "";
         
-        // Button-Event neu binden
-        document.getElementById('remConfirmBtn').onclick = () => { 
+        // WICHTIG: Alten Event-Listener entfernen durch Klonen des Buttons
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+        newConfirmBtn.onclick = () => { 
             let val = parseFloat(input.value); 
+            console.log("Abziehen bestätigt:", p, val);
             if(!isNaN(val) && val > 0) { 
                 core.removeAmt(p, val); 
                 this.closeModals(); 
-            } 
+            } else {
+                alert("Bitte eine gültige Menge eingeben.");
+            }
         };
         
-        document.getElementById('remModal').style.display = "flex";
+        modal.style.display = "flex";
         setTimeout(() => input.focus(), 150);
     },
 
-    // Hilfsfunktion: Produktdaten aus config.js holen
     getProdData(n) { 
         for (let c in productStructure) {
             if (productStructure[c][n]) return productStructure[c][n];
@@ -78,7 +90,6 @@ const ui = {
         return { d: 1, u: "ml", s: [1000], l: "#" }; 
     },
 
-    // Dashboard Tabelle zeichnen
     renderTable() {
         const container = document.getElementById('lagerContainer'); 
         if(!container) return;
@@ -94,7 +105,6 @@ const ui = {
                 const data = core.stockData[p] || { qty: 0, h: [] }; 
                 const sId = core.getSafeId(p);
                 
-                // TREND LOGIK
                 const hVals = (data.h || []).map(e => typeof e === 'object' ? e.v : e);
                 let trendHtml = '';
                 if(hVals.length >= 2) {
@@ -106,10 +116,12 @@ const ui = {
                     else trendHtml = `<span class="trend-icon stable" title="Verbrauch gleichbleibend">→</span>`;
                 }
 
-                // WARN-LOGIK
                 const last5 = (data.h || []).slice(-5).map(i => typeof i === 'object' ? i.v : i);
                 let avg = last5.length ? core.r3(last5.reduce((a, b) => a + b, 0) / last5.length) : 0;
                 let isWarn = avg > 0 && (parseFloat(data.qty) || 0) < avg;
+
+                // Escape den Produktnamen für das HTML Attribut (um Fehler bei Klammern zu vermeiden)
+                const pEscaped = p.replace(/'/g, "\\'");
 
                 html += `
                 <tr class="prod-row" onclick="ui.toggleHistory('${sId}')">
@@ -124,8 +136,8 @@ const ui = {
                         </div>
                         <span class="avg-info">${avg > 0 ? 'Ø ' + avg : ''}</span>
                     </td>
-                    <td><button class="btn-sm btn-plus" onclick="event.stopPropagation(); ui.openAddModal('${p}')">+</button></td>
-                    <td><button class="btn-sm btn-minus" onclick="event.stopPropagation(); ui.openRemModal('${p}')">−</button></td>
+                    <td><button class="btn-sm btn-plus" onclick="event.stopPropagation(); ui.openAddModal('${pEscaped}')">+</button></td>
+                    <td><button class="btn-sm btn-minus" onclick="event.stopPropagation(); ui.openRemModal('${pEscaped}')">−</button></td>
                 </tr>
                 <tr id="hist-row-${sId}" class="history-row">
                     <td colspan="4">
@@ -134,7 +146,11 @@ const ui = {
                             ${(data.h && data.h.length > 0) ? data.h.slice(-12).reverse().map((e, i) => {
                                 const v = typeof e === 'object' ? e.v : e; 
                                 const t = typeof e === 'object' ? e.t : '--';
-                                return `<div class="history-item"><span style="font-size:0.6rem; color:#666;">${t}</span> <b>${v}${pData.u}</b><button class="history-del" onclick="event.stopPropagation(); core.stockData['${p}'].h.splice(${data.h.length-1-i},1); core.save();">×</button></div>`;
+                                return `<div class="history-item">
+                                    <span style="font-size:0.6rem; color:#666;">${t}</span> 
+                                    <b>${v}${pData.u}</b>
+                                    <button class="history-del" onclick="event.stopPropagation(); core.stockData['${pEscaped}'].h.splice(${data.h.length-1-i},1); core.save();">×</button>
+                                </div>`;
                             }).join('') : "Keine Einträge"}
                         </div>
                     </td>
@@ -144,7 +160,6 @@ const ui = {
             catCard.innerHTML = html; 
             container.appendChild(catCard);
         }
-        if (window.measuring && typeof measuring.fill === 'function') measuring.fill();
     },
 
     toggleHistory(sId) {
