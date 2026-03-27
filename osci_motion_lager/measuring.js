@@ -1,54 +1,34 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messstation - Osci Lager</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="app-container">
-    <div class="header-container"><img src="header.png" class="banner-img"></div>
-    <nav class="top-nav">
-        <a href="index.html" class="nav-link">← Zurück</a>
-        <div style="flex:1; text-align:center; color:var(--primary); font-weight:bold; font-size:0.8rem;">MESSSTATION</div>
-    </nav>
-
-    <div class="section-card" style="margin-top:20px;">
-        <div class="section-header">⚖️ Produkt Wiegen</div>
-        <div class="section-body" style="padding:20px; display:flex; flex-direction:column; gap:15px;">
-            <label style="font-size:0.8rem; color:#888;">Produkt auswählen:</label>
-            <select id="prodSelect"></select>
-            
-            <label style="font-size:0.8rem; color:#888;">Flasche & Gewicht:</label>
-            <div style="display: flex; gap: 10px;">
-                <select id="gebindeSelect" style="flex:1;">
-                    <option value="9.3">30ml (9,3g)</option>
-                    <option value="18.5">100ml (18,5g)</option>
-                    <option value="57" selected>1L (57g)</option>
-                    <option value="260">5L (260g)</option>
-                    <option value="440">10L (440g)</option>
-                </select>
-                <input type="number" id="weightInput" style="flex:1;" placeholder="Gramm Waage" oninput="measuring.calculate()">
-            </div>
-            
-            <div style="background:#000; padding:20px; border-radius:12px; text-align:center; border:1px solid #333;">
-                <div style="font-size:0.7rem; color:#666; text-transform:uppercase;">Berechneter Inhalt</div>
-                <div id="calcResult" style="font-weight:bold; font-size: 3rem; color: var(--primary);">0</div>
-            </div>
-            
-            <button class="big-btn btn-blue" onclick="measuring.updateStock()">ERGEBNIS ÜBERNEHMEN</button>
-        </div>
-    </div>
-    <div class="footer-container"><img src="footer.png" class="footer-img"></div>
-</div>
-
-<script src="config.js"></script><script src="core.js"></script><script src="ui.js"></script><script src="measuring.js"></script>
-<script>
-    window.onload = async () => { 
-        await core.init(); 
-        measuring.fill(); 
-    };
-</script>
-</body>
-</html>
+const measuring = {
+    fill() {
+        const pSel = document.getElementById('prodSelect'); 
+        if (!pSel) return;
+        
+        pSel.innerHTML = '<option value="">Produkt wählen...</option>'; 
+        for (const cat in productStructure) {
+            let group = document.createElement('optgroup'); group.label = cat;
+            for (const p in productStructure[cat]) {
+                if (!["Mischbettharz", "ICP Ocean Check", "ICP Ocean Check Pro"].includes(p)) {
+                    let opt = document.createElement('option'); opt.value = p; opt.innerText = p; group.appendChild(opt);
+                }
+            }
+            if (group.children.length > 0) pSel.appendChild(group);
+        }
+    },
+    calculate() {
+        const p = document.getElementById('prodSelect').value; if (!p) return;
+        const pD = ui.getProdData(p);
+        const weight = parseFloat(document.getElementById('weightInput').value) || 0;
+        const tara = parseFloat(document.getElementById('gebindeSelect').value) || 0;
+        const res = core.r3((weight - tara) / pD.d);
+        document.getElementById('calcResult').innerText = Math.max(0, res);
+    },
+    updateStock() {
+        let p = document.getElementById('prodSelect').value; if (!p) return;
+        const pD = ui.getProdData(p);
+        const weight = parseFloat(document.getElementById('weightInput').value) || 0;
+        const tara = parseFloat(document.getElementById('gebindeSelect').value) || 0;
+        const res = core.r3((weight - tara) / pD.d);
+        core.ensureProd(p); core.stockData[p].qty = Math.max(0, res); core.save();
+        alert(p + " wurde auf " + Math.max(0, res) + pD.u + " gesetzt.");
+    }
+};
