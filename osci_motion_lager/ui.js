@@ -125,37 +125,21 @@ const ui = {
                 const pSafe = p.replace(/'/g, "\\'");
 
                 html += `
-                <tr class="prod-row" onclick="ui.toggleHistory('${sId}')">
-                    <td class="td-name">
-                        <span class="prod-link">${p}</span>
-                        <a href="${pData.l}" target="_blank" class="shop-btn" onclick="event.stopPropagation()">Shop</a>
-                    </td>
-                    <td class="td-stand">
-                        <div class="stock-val-container" style="display:flex; align-items:center; gap:5px;">
-                            ${trendHtml}
-                            <span class="stock-val ${isWarn?'low-stock':''}">${data.qty||0}${pData.u}</span>
-                        </div>
-                        <span class="avg-info">${avg > 0 ? 'Ø ' + avg : ''}</span>
-                    </td>
-                    <td><button class="btn-sm btn-plus" onclick="event.stopPropagation(); ui.openAddModal('${pSafe}')">+</button></td>
-                    <td><button class="btn-sm btn-minus" onclick="event.stopPropagation(); ui.openRemModal('${pSafe}')">−</button></td>
-                </tr>
-                <tr id="hist-row-${sId}" class="history-row">
-                    <td colspan="4">
-                        <div class="history-container">
-                            <span style="color:var(--primary); font-size:0.7rem; font-weight:bold; width:100%; display:block; margin-bottom:5px;">LETZTE VERBRÄUCHE (Max 12):</span>
-                            ${(data.h && data.h.length > 0) ? data.h.slice(-12).reverse().map((e, i) => {
-                                const v = typeof e === 'object' ? e.v : e; 
-                                const t = typeof e === 'object' ? e.t : '--';
-                                return `<div class="history-item">
-                                    <span style="font-size:0.6rem; color:#666;">${t}</span> 
-                                    <b>${v}${pData.u}</b>
-                                    <button class="history-del" onclick="event.stopPropagation(); core.stockData['${pSafe}'].h.splice(${data.h.length-1-i},1); core.save();">×</button>
-                                </div>`;
-                            }).join('') : "Keine Einträge vorhanden"}
-                        </div>
-                    </td>
-                </tr>`;
+<tr class="prod-row" onclick="ui.toggleHistory('${sId}')">
+    <td class="td-name">
+        <span class="prod-link">${p}</span>
+        <a href="${pData.l}" target="_blank" class="shop-btn" onclick="event.stopPropagation()">Shop</a>
+    </td>
+    <td class="td-stand">
+        <div class="stock-val-container">
+            ${trendHtml}
+            <span class="stock-val ${isWarn?'low-stock':''}">${data.qty||0}${pData.u}</span>
+        </div>
+        <span class="avg-info">${avg > 0 ? 'Ø ' + avg : ''}</span>
+    </td>
+    <td><button class="btn-sm btn-plus" onclick="event.stopPropagation(); ui.openAddModal('${pSafe}')">+</button></td>
+    <td><button class="btn-sm btn-minus" onclick="event.stopPropagation(); ui.openRemModal('${pSafe}')">−</button></td>
+</tr>`;;
             }
             html += `</table>`; 
             catCard.innerHTML = html; 
