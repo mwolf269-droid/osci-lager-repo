@@ -1,9 +1,9 @@
 const ui = {
-    // Hilfsfunktion für aufklappbare Bereiche
+    // Öffnet/Schließt die Sektionen
     toggleColl(el) { 
         el.classList.toggle("active"); 
         let c = el.nextElementSibling; 
-        c.style.display = (c.style.display === "block") ? "none" : "block"; 
+        if (c) c.style.display = (c.style.display === "block") ? "none" : "block"; 
     },
 
     // Schließt alle Modal-Fenster
@@ -45,19 +45,27 @@ const ui = {
 
     // Modal für Entnahme (-)
     openRemModal(p) {
+        // ICP SPEZIAL: Sofort 1 Stück abziehen
         if (p.toLowerCase().includes("icp")) { 
             core.removeAmt(p, 1); 
             return; 
         }
+        
         const pD = this.getProdData(p);
         document.getElementById('remModalTitle').innerText = p;
         document.getElementById('modalUnit').innerText = pD.u;
         const input = document.getElementById('remInput'); 
         input.value = "";
+        
+        // Button-Event neu binden
         document.getElementById('remConfirmBtn').onclick = () => { 
             let val = parseFloat(input.value); 
-            if(val > 0) { core.removeAmt(p, val); this.closeModals(); } 
+            if(!isNaN(val) && val > 0) { 
+                core.removeAmt(p, val); 
+                this.closeModals(); 
+            } 
         };
+        
         document.getElementById('remModal').style.display = "flex";
         setTimeout(() => input.focus(), 150);
     },
@@ -70,10 +78,10 @@ const ui = {
         return { d: 1, u: "ml", s: [1000], l: "#" }; 
     },
 
-    // Hauptfunktion: Zeichnet die Bestandsliste (Dashboard)
+    // Dashboard Tabelle zeichnen
     renderTable() {
         const container = document.getElementById('lagerContainer'); 
-        if(!container) return; // Beendet die Funktion, wenn wir nicht auf dem Dashboard sind
+        if(!container) return;
 
         container.innerHTML = "";
         for (const cat in productStructure) {
@@ -86,7 +94,7 @@ const ui = {
                 const data = core.stockData[p] || { qty: 0, h: [] }; 
                 const sId = core.getSafeId(p);
                 
-                // TREND LOGIK (Vergleich der letzten 2 Verbräuche)
+                // TREND LOGIK
                 const hVals = (data.h || []).map(e => typeof e === 'object' ? e.v : e);
                 let trendHtml = '';
                 if(hVals.length >= 2) {
@@ -98,7 +106,7 @@ const ui = {
                     else trendHtml = `<span class="trend-icon stable" title="Verbrauch gleichbleibend">→</span>`;
                 }
 
-                // WARN-LOGIK (Blinken)
+                // WARN-LOGIK
                 const last5 = (data.h || []).slice(-5).map(i => typeof i === 'object' ? i.v : i);
                 let avg = last5.length ? core.r3(last5.reduce((a, b) => a + b, 0) / last5.length) : 0;
                 let isWarn = avg > 0 && (parseFloat(data.qty) || 0) < avg;
@@ -122,15 +130,11 @@ const ui = {
                 <tr id="hist-row-${sId}" class="history-row">
                     <td colspan="4">
                         <div class="history-container">
-                            <span style="color:var(--primary); font-size:0.7rem; font-weight:bold; width:100%; display:block; margin-bottom:5px;">LOGS (Max 12):</span>
+                            <span style="color:var(--primary); font-size:0.7rem; font-weight:bold; width:100%; display:block; margin-bottom:5px;">LOGS:</span>
                             ${(data.h && data.h.length > 0) ? data.h.slice(-12).reverse().map((e, i) => {
                                 const v = typeof e === 'object' ? e.v : e; 
                                 const t = typeof e === 'object' ? e.t : '--';
-                                return `<div class="history-item">
-                                    <span style="font-size:0.6rem; color:#666;">${t}</span> 
-                                    <b>${v}${pData.u}</b>
-                                    <button class="history-del" onclick="event.stopPropagation(); core.stockData['${p}'].h.splice(${data.h.length-1-i},1); core.save();">×</button>
-                                </div>`;
+                                return `<div class="history-item"><span style="font-size:0.6rem; color:#666;">${t}</span> <b>${v}${pData.u}</b><button class="history-del" onclick="event.stopPropagation(); core.stockData['${p}'].h.splice(${data.h.length-1-i},1); core.save();">×</button></div>`;
                             }).join('') : "Keine Einträge"}
                         </div>
                     </td>
@@ -140,9 +144,9 @@ const ui = {
             catCard.innerHTML = html; 
             container.appendChild(catCard);
         }
+        if (window.measuring && typeof measuring.fill === 'function') measuring.fill();
     },
 
-    // Zeigt/Versteckt die History eines Produkts
     toggleHistory(sId) {
         const row = document.getElementById('hist-row-' + sId);
         if (row) {
