@@ -1,14 +1,17 @@
 const ui = {
+    // Hilfsfunktion für aufklappbare Bereiche (z.B. im Handbuch oder Dashboard)
     toggleColl(el) { 
         el.classList.toggle("active"); 
         let c = el.nextElementSibling; 
         if (c) c.style.display = (c.style.display === "block") ? "none" : "block"; 
     },
 
+    // Schließt alle Modal-Overlays
     closeModals() { 
         document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = "none"); 
     },
 
+    // Zeigt die übersichtliche Tabelle nach einem Import
     showImportSummary(items) {
         const list = document.getElementById('importSummaryList');
         if (!list) return;
@@ -24,6 +27,7 @@ const ui = {
         document.getElementById('importSummaryModal').style.display = "flex";
     },
 
+    // Fenster für Zukauf (+) öffnen
     openAddModal(p) {
         const pD = this.getProdData(p);
         document.getElementById('addModalTitle').innerText = p;
@@ -39,10 +43,9 @@ const ui = {
         document.getElementById('addModal').style.display = "flex";
     },
 
+    // Fenster für Entnahme (-) öffnen
     openRemModal(p) {
-        console.log("Öffne Entnahme für:", p); // Debug-Info für die Konsole
-        
-        // ICP SPEZIAL: Sofort 1 Stück abziehen
+        // ICP SPEZIAL: Sofort 1 Stück abziehen ohne Fenster
         if (p.toLowerCase().includes("icp")) { 
             core.removeAmt(p, 1); 
             return; 
@@ -55,27 +58,21 @@ const ui = {
         const unitLabel = document.getElementById('modalUnit');
         const confirmBtn = document.getElementById('remConfirmBtn');
 
-        if (!modal || !input || !confirmBtn) {
-            console.error("Modal-Elemente nicht gefunden!");
-            return;
-        }
+        if (!modal || !input || !confirmBtn) return;
 
         title.innerText = p;
         unitLabel.innerText = pD.u;
         input.value = "";
         
-        // WICHTIG: Alten Event-Listener entfernen durch Klonen des Buttons
+        // Event-Listener sicher neu binden (verhindert Doppelklicks/falsche Produkte)
         const newConfirmBtn = confirmBtn.cloneNode(true);
         confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
 
         newConfirmBtn.onclick = () => { 
             let val = parseFloat(input.value); 
-            console.log("Abziehen bestätigt:", p, val);
             if(!isNaN(val) && val > 0) { 
                 core.removeAmt(p, val); 
                 this.closeModals(); 
-            } else {
-                alert("Bitte eine gültige Menge eingeben.");
             }
         };
         
@@ -83,6 +80,7 @@ const ui = {
         setTimeout(() => input.focus(), 150);
     },
 
+    // Holt Basisinfos (Dichte, Einheit, Gebinde) aus der config.js
     getProdData(n) { 
         for (let c in productStructure) {
             if (productStructure[c][n]) return productStructure[c][n];
@@ -90,6 +88,7 @@ const ui = {
         return { d: 1, u: "ml", s: [1000], l: "#" }; 
     },
 
+    // Zeichnet die gesamte Lager-Tabelle auf dem Dashboard
     renderTable() {
         const container = document.getElementById('lagerContainer'); 
         if(!container) return;
@@ -105,6 +104,7 @@ const ui = {
                 const data = core.stockData[p] || { qty: 0, h: [] }; 
                 const sId = core.getSafeId(p);
                 
+                // TREND LOGIK (Vergleich der letzten zwei Werte)
                 const hVals = (data.h || []).map(e => typeof e === 'object' ? e.v : e);
                 let trendHtml = '';
                 if(hVals.length >= 2) {
@@ -116,12 +116,13 @@ const ui = {
                     else trendHtml = `<span class="trend-icon stable" title="Verbrauch gleichbleibend">→</span>`;
                 }
 
+                // WARN-LOGIK (Blinken wenn Bestand unter 5x Durchschnitt)
                 const last5 = (data.h || []).slice(-5).map(i => typeof i === 'object' ? i.v : i);
                 let avg = last5.length ? core.r3(last5.reduce((a, b) => a + b, 0) / last5.length) : 0;
                 let isWarn = avg > 0 && (parseFloat(data.qty) || 0) < avg;
 
-                // Escape den Produktnamen für das HTML Attribut (um Fehler bei Klammern zu vermeiden)
-                const pEscaped = p.replace(/'/g, "\\'");
+                // Sonderzeichen in Namen für HTML-Attribute sicher machen
+                const pSafe = p.replace(/'/g, "\\'");
 
                 html += `
                 <tr class="prod-row" onclick="ui.toggleHistory('${sId}')">
@@ -130,28 +131,28 @@ const ui = {
                         <a href="${pData.l}" target="_blank" class="shop-btn" onclick="event.stopPropagation()">Shop</a>
                     </td>
                     <td class="td-stand">
-                        <div style="display:flex; align-items:center; justify-content:flex-end; gap:5px;">
+                        <div class="stock-val-container" style="display:flex; align-items:center; gap:5px;">
                             ${trendHtml}
                             <span class="stock-val ${isWarn?'low-stock':''}">${data.qty||0}${pData.u}</span>
                         </div>
                         <span class="avg-info">${avg > 0 ? 'Ø ' + avg : ''}</span>
                     </td>
-                    <td><button class="btn-sm btn-plus" onclick="event.stopPropagation(); ui.openAddModal('${pEscaped}')">+</button></td>
-                    <td><button class="btn-sm btn-minus" onclick="event.stopPropagation(); ui.openRemModal('${pEscaped}')">−</button></td>
+                    <td><button class="btn-sm btn-plus" onclick="event.stopPropagation(); ui.openAddModal('${pSafe}')">+</button></td>
+                    <td><button class="btn-sm btn-minus" onclick="event.stopPropagation(); ui.openRemModal('${pSafe}')">−</button></td>
                 </tr>
                 <tr id="hist-row-${sId}" class="history-row">
                     <td colspan="4">
                         <div class="history-container">
-                            <span style="color:var(--primary); font-size:0.7rem; font-weight:bold; width:100%; display:block; margin-bottom:5px;">LOGS:</span>
+                            <span style="color:var(--primary); font-size:0.7rem; font-weight:bold; width:100%; display:block; margin-bottom:5px;">LETZTE VERBRÄUCHE (Max 12):</span>
                             ${(data.h && data.h.length > 0) ? data.h.slice(-12).reverse().map((e, i) => {
                                 const v = typeof e === 'object' ? e.v : e; 
                                 const t = typeof e === 'object' ? e.t : '--';
                                 return `<div class="history-item">
                                     <span style="font-size:0.6rem; color:#666;">${t}</span> 
                                     <b>${v}${pData.u}</b>
-                                    <button class="history-del" onclick="event.stopPropagation(); core.stockData['${pEscaped}'].h.splice(${data.h.length-1-i},1); core.save();">×</button>
+                                    <button class="history-del" onclick="event.stopPropagation(); core.stockData['${pSafe}'].h.splice(${data.h.length-1-i},1); core.save();">×</button>
                                 </div>`;
-                            }).join('') : "Keine Einträge"}
+                            }).join('') : "Keine Einträge vorhanden"}
                         </div>
                     </td>
                 </tr>`;
@@ -160,12 +161,19 @@ const ui = {
             catCard.innerHTML = html; 
             container.appendChild(catCard);
         }
+        
+        // Dropdowns auf anderen Modulen (falls vorhanden) befüllen
+        if (window.measuring && typeof measuring.fill === 'function') {
+            measuring.fill();
+        }
     },
 
+    // Blendet die History-Zeile ein oder aus
     toggleHistory(sId) {
         const row = document.getElementById('hist-row-' + sId);
         if (row) {
             const isActive = row.classList.contains('active');
+            // Alle anderen offenen Logs schließen für bessere Übersicht
             document.querySelectorAll('.history-row').forEach(r => r.classList.remove('active'));
             if (!isActive) row.classList.add('active');
         }
