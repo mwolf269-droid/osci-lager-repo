@@ -58,7 +58,7 @@ const ui = {
             }
             html += `</table>`; catCard.innerHTML = html; container.appendChild(catCard);
         }
-        if (window.measuring) measuring.fill();
+        if (window.measuring && typeof measuring.fill === 'function') measuring.fill();
     },
 
     toggleHistory(sId) {
