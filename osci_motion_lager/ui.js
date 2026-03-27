@@ -58,7 +58,11 @@ const ui = {
             }
             html += `</table>`; catCard.innerHTML = html; container.appendChild(catCard);
         }
-        if (window.measuring && typeof measuring.fill === 'function') measuring.fill();
+        
+        // Dropdown in der Messstation befüllen
+        if (typeof measuring !== 'undefined' && typeof measuring.fill === 'function') {
+            measuring.fill();
+        }
     },
 
     toggleHistory(sId) {
