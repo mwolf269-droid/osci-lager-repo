@@ -20,7 +20,7 @@
     <div class="collapsible-bar" onclick="ui.toggleColl(this)"><div>⚖️ Messstation (Wiegen)</div><span>+</span></div>
     <div class="content">
         <div style="display: flex; flex-direction: column; gap: 12px;">
-            <select id="prodSelect"></select>
+            <select id="prodSelect"><option value="">Lade Produkte...</option></select>
             <div style="display: flex; gap: 10px;">
                 <select id="gebindeSelect" style="flex:1;"><option value="9.3">30ml (9,3g)</option><option value="18.5">100ml (18,5g)</option><option value="57" selected>1L (57g)</option><option value="260">5L (260g)</option><option value="440">10L (440g)</option></select>
                 <input type="number" id="weightInput" style="flex:1;" placeholder="Gramm" oninput="measuring.calculate()">
