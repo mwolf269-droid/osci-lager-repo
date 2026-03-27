@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Osci-Motion Lagerverwaltung</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header-container"><img src="header.png" alt="Osci-Motion" class="banner-img"></div>
+    <nav class="top-nav"><a href="handbuch.html" class="nav-link">📖 Handbuch</a><a href="changelog.html" class="nav-link">🛠️ Changelog</a></nav>
+    <div id="status" class="status-bar">Verbinde...</div>
+    <div id="lagerContainer"></div>
+
+    <div class="collapsible-bar" onclick="ui.toggleColl(this)"><div>⚖️ Messstation (Wiegen)</div><span>+</span></div>
+    <div class="content" id="messstation-ui">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <select id="prodSelect"></select>
+            <div style="display: flex; gap: 10px;">
+                <select id="gebindeSelect" style="flex:1;"><option value="9.3">30ml (9,3g)</option><option value="18.5">100ml (18,5g)</option><option value="57" selected>1L (57g)</option><option value="260">5L (260g)</option><option value="440">10L (440g)</option></select>
+                <input type="number" id="weightInput" style="flex:1;" placeholder="Gramm" oninput="measuring.calculate()">
+            </div>
+            <div id="calcResult" style="text-align:center; font-weight:bold; font-size: 2.5rem; color: var(--primary); padding:10px;">0</div>
+            <button class="nav-link" style="justify-content:center; background:var(--primary); color:black; border:none; width:100%;" onclick="measuring.updateStock()">Ergebnis übernehmen</button>
+        </div>
+    </div>
+
+    <div class="collapsible-bar" onclick="ui.toggleColl(this)"><div>📊 Import (Dosierung)</div><span>+</span></div>
+    <div class="content">
+        <textarea id="importText" placeholder="Text von NaCl bis ml einfügen..." rows="4"></textarea>
+        <button class="nav-link" style="justify-content:center; background:#673AB7; color:white; border:none; width:100%; margin-top:10px;" onclick="importer.process()">Dosierung verbuchen</button>
+    </div>
+    <div class="footer-container"><img src="footer.png" class="footer-img"></div>
+</div>
+
+<!-- MODALS -->
+<div id="addModal" class="modal-overlay"><div class="modal-content"><h3 id="addModalTitle">Zukauf</h3><div id="addModalOptions"></div><button onclick="ui.closeModals()" class="nav-link" style="width:100%; justify-content:center; margin-top:10px; border:none;">Abbrechen</button></div></div>
+<div id="remModal" class="modal-overlay"><div class="modal-content"><h3 id="remModalTitle">Entnahme</h3><input type="number" id="remInput" style="font-size:2rem; text-align:center; color:var(--primary);" placeholder="0.00"><span id="modalUnit" style="display:block; margin:10px 0;">ml</span><button id="remConfirmBtn" class="big-btn btn-blue" style="background:var(--danger)">ABZIEHEN</button><button onclick="ui.closeModals()" class="nav-link" style="width:100%; justify-content:center; margin-top:10px; border:none; background:none;">Abbrechen</button></div></div>
+
+<!-- NEUES IMPORT SUMMARY MODAL -->
+<div id="importSummaryModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 450px;">
+        <h3 style="color:var(--success); margin-top:0;">Import erfolgreich</h3>
+        <p style="font-size:0.8rem; color:#aaa;">Folgende Mengen wurden abgezogen:</p>
+        <div id="importSummaryList" style="max-height: 300px; overflow-y: auto; margin: 15px 0; border: 1px solid #333; border-radius: 8px;"></div>
+        <button onclick="ui.closeModals()" class="big-btn btn-blue" style="width:100%;">OK, VERSTANDEN</button>
+    </div>
+</div>
+
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script src="ui.js"></script>
+<script src="measuring.js"></script>
+<script src="import.js"></script>
+<script>window.onload = () => { if(typeof core !== 'undefined' && core.init) core.init(); };</script>
+</body>
+</html>

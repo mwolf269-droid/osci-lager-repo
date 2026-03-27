@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Handbuch - Osci Lager</title>
+    <style>
+        :root { --primary: #00d2ff; --bg: #0b0b0b; --card: #161616; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; line-height: 1.6; }
+        .card { background: var(--card); padding: 30px; border-radius: 15px; width: 100%; max-width: 800px; border: 1px solid #2a2a2a; }
+        .nav-back { color: var(--primary); text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block; }
+        h2, h3 { color: var(--primary); border-bottom: 1px solid #333; padding-bottom: 8px; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        .highlight { color: var(--primary); font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <a href="index.html" class="nav-back">← Zurück zum Lager</a>
+        <h2>📖 Benutzerhandbuch</h2>
+
+        <h3>📦 Lagerverwaltung</h3>
+        <ul>
+            <li><span class="highlight">Zukauf (+):</span> Öffnet ein Menü mit vordefinierten Gebindegrößen. Ein Klick fügt die Menge sofort hinzu.</li>
+            <li><span class="highlight">Entnahme (-):</span> Öffnet ein Eingabefeld für individuelle ml-Mengen. Der Wert wird abgezogen und protokolliert.</li>
+            <li><span class="highlight">ICP Spezial:</span> Bei ICP-Produkten zieht ein Klick auf das Minus sofort <span class="highlight">1 Stück</span> ab, ohne ein Fenster zu öffnen.</li>
+            <li><span class="highlight">Logs & Historie:</span> Klicke auf einen Produktnamen, um die letzten 10 Entnahmen zu sehen. Dort können Fehlbuchungen über das rote X gelöscht werden.</li>
+        </ul>
+
+        <h3>⚖️ Messstation (Wiegen)</h3>
+        <ul>
+            <li>Wähle ein Produkt und die Flaschengröße (Tara) aus.</li>
+            <li>Gib das Gewicht deiner Waage in Gramm ein. Die App berechnet unter Berücksichtigung der <span class="highlight">Dichte</span> den ml-Stand.</li>
+            <li>Mit "Ergebnis übernehmen" wird der alte Lagerstand durch den neu berechneten Wert ersetzt.</li>
+        </ul>
+
+        <h3>📊 Intelligenter Import</h3>
+        <p>Die App unterstützt zwei Formate beim Einfügen von Texten aus Dosierrechnern:</p>
+        <ul>
+            <li><span class="highlight">Horizontal:</span> Namen in der ersten Zeile, Werte in der zweiten (z.B. NaCl, MgCl2).</li>
+            <li><span class="highlight">Vertikal/Stream:</span> Ein Textblock, in dem Kürzel (F, Ni, Co) gefolgt von einem ml-Wert stehen.</li>
+            <li><span class="highlight">Jod-Fix:</span> Da das Kürzel "I" oft als "1" kopiert wird, erkennt die App eine alleinstehende "1" automatisch als Jod.</li>
+        </ul>
+
+        <h3>⚠️ Warnsystem</h3>
+        <p>Wenn die Füllmenge eines Produkts unter den <span class="highlight">Durchschnitt der letzten 5 Entnahmen</span> fällt, beginnt der Wert <span class="highlight">rot zu blinken</span>. Dies signalisiert, dass das Produkt bald nachbestellt werden muss.</p>
+    </div>
+</body>
+</html>
