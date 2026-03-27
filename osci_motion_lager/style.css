@@ -9,7 +9,7 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); co
 .banner-img, .footer-img { width: 100%; max-width: 800px; height: auto; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 .footer-img { opacity: 0.4; margin-top: 40px; }
 .top-nav { display: flex; gap: 8px; justify-content: center; margin-bottom: 25px; width: 100%; }
-.nav-link { color: #fff; text-decoration: none; font-size: 0.75rem; font-weight: 600; padding: 10px 15px; background: #222; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 6px; text-transform: uppercase; }
+.nav-link { color: #fff; text-decoration: none; font-size: 0.75rem; font-weight: 600; padding: 10px 15px; background: #222; border-radius: 12px; border: 1px solid var(--border); display: flex; align-items: center; gap: 6px; text-transform: uppercase; text-align: center; }
 .status-bar { font-size: 0.7rem; color: var(--success); text-align: right; margin-bottom: 8px; width: 100%; opacity: 0.8; font-weight: bold; }
 .cat-card, .section-card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
 .cat-header { background: var(--cat-bg); color: var(--primary); font-weight: bold; padding: 14px 18px; font-size: 0.85rem; text-transform: uppercase; border-bottom: 1px solid var(--border); }
