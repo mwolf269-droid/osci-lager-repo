@@ -20,9 +20,11 @@ const core = {
             });
             const data = await res.json();
             this.stockData = data.attributes?.lager || {};
-            document.getElementById('status').innerText = "● Synchronisiert";
-            ui.renderTable();
-        } catch (e) { document.getElementById('status').innerText = "● Verbindungsfehler"; }
+            if(document.getElementById('status')) document.getElementById('status').innerText = "● Synchronisiert";
+            if(typeof ui !== 'undefined') ui.renderTable();
+        } catch (e) { 
+            if(document.getElementById('status')) document.getElementById('status').innerText = "● Verbindungsfehler"; 
+        }
     },
 
     async save() {
@@ -34,7 +36,7 @@ const core = {
                 attributes: { lager: this.stockData, friendly_name: "Osci-Lager", icon: "mdi:database" }
             }) 
         });
-        ui.renderTable();
+        if(typeof ui !== 'undefined') ui.renderTable();
     },
 
     ensureProd(p) { if (!this.stockData[p]) this.stockData[p] = { qty: 0, h: [] }; },
