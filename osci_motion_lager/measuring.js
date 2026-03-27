@@ -1,12 +1,23 @@
 const measuring = {
     fill() {
-        const pSel = document.getElementById('prodSelect'); if (!pSel) return;
+        const pSel = document.getElementById('prodSelect'); 
+        if (!pSel) return;
+        
+        // Dropdown leeren und neu befüllen
         pSel.innerHTML = '<option value="">Produkt wählen...</option>'; 
+
         for (const cat in productStructure) {
-            let group = document.createElement('optgroup'); group.label = cat;
+            let group = document.createElement('optgroup'); 
+            group.label = cat;
+            
             for (const p in productStructure[cat]) {
+                const pD = productStructure[cat][p];
+                // Produkte ohne Dichte ausschließen
                 if (!["Mischbettharz", "ICP Ocean Check", "ICP Ocean Check Pro"].includes(p)) {
-                    let opt = document.createElement('option'); opt.value = p; opt.innerText = p; group.appendChild(opt);
+                    let opt = document.createElement('option'); 
+                    opt.value = p; 
+                    opt.innerText = p; 
+                    group.appendChild(opt);
                 }
             }
             if (group.children.length > 0) pSel.appendChild(group);
