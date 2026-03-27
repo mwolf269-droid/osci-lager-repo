@@ -20,8 +20,9 @@ const core = {
             });
             const data = await res.json();
             this.stockData = data.attributes?.lager || {};
+            document.getElementById('status').innerText = "● Synchronisiert";
             ui.renderTable();
-        } catch (e) { console.error("Load failed", e); }
+        } catch (e) { document.getElementById('status').innerText = "● Verbindungsfehler"; }
     },
 
     async save() {
@@ -38,17 +39,12 @@ const core = {
 
     ensureProd(p) { if (!this.stockData[p]) this.stockData[p] = { qty: 0, h: [] }; },
     addVol(p, val) { this.ensureProd(p); this.stockData[p].qty = this.r3(parseFloat(this.stockData[p].qty || 0) + val); this.save(); },
-    
     removeAmt(p, val) {
         this.ensureProd(p);
         if(val > 0) {
             this.stockData[p].qty = this.r3(Math.max(0, parseFloat(this.stockData[p].qty || 0) - val));
             if (!this.stockData[p].h) this.stockData[p].h = [];
-            
-            // Speichere als Objekt mit Wert (v) und Datum (t)
             this.stockData[p].h.push({ v: this.r3(val), t: this.getDt() });
-            
-            // Limit auf 12
             if (this.stockData[p].h.length > 12) this.stockData[p].h.shift();
             this.save();
         }
