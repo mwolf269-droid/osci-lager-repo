@@ -2,60 +2,32 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Handbuch - Osci-Lager Guide</title>
+    <title>Handbuch - Osci Lager</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .card { background: var(--card); padding: 40px; border-radius: 20px; width: 100%; max-width: 800px; border: 1px solid #2a2a2a; margin: 20px auto; }
-        h1, h2, h3 { color: var(--primary); }
-        .hl { color: var(--primary); font-weight: bold; }
-        .feature-item { background: #1f1f1f; padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; }
-        img { max-width: 100%; height: auto; border-radius: 10px; border: 1px solid #444; margin-top: 15px; }
-    </style>
 </head>
 <body>
 <div class="app-container">
     <div class="header-container"><img src="header.png" class="banner-img"></div>
-    
     <nav class="top-nav">
-        <a href="handbuch.html" class="nav-link">📖 Hilfe</a>
+        <a href="handbuch.html" class="nav-link active">📖 Hilfe</a>
         <a href="stats.html" class="nav-link">📈 Statistik</a>
         <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
         <a href="import.html" class="nav-link">📊 Import</a>
+        <a href="index.html" class="nav-link">📦 Lager</a>
         <a href="changelog.html" class="nav-link">🛠️ Logs</a>
     </nav>
-
     <div class="card">
         <h1>Willkommen im Osci-Lager</h1>
-        <p>Dieses Handbuch hilft dir, das Maximum aus deiner Lagerverwaltung herauszuholen.</p>
-
-        <h2>⚖️ Die Messstation (Wiegen)</h2>
-        <p>Über den Button <span class="hl">Wiegen</span> erreichst du die Messstation. Hier kannst du den ml-Stand deiner Flaschen präzise über das Gewicht kalibrieren. Das System zieht das Flaschengewicht (Tara) automatisch ab.</p>
-
-        <h2>📊 Der Import-Assistent</h2>
-        <p>Kopiere deine Analysedaten einfach in das Importfeld. Die App erkennt die Mengen automatisch.</p>
-        
-        <div class="feature-item">
-            <h3>🛠️ Custom & Repair (Osci-Motion)</h3>
-            <p>Kopiere die Ergebnistabelle aus dem Osci-Rechner (Namen und ml-Werte). Die App verbucht die Mengen direkt im Bestand.</p>
-            <img src="import cr osci.png" alt="Osci Import">
-        </div>
-
-        <div class="feature-item">
-            <h3>📱 ReefManager App (OCR)</h3>
-            <p>Erstelle einen Screenshot deiner Dosierwerte, kopiere den Text via Smartphone-Funktion (OCR) und füge ihn hier ein.</p>
-            <img src="Import RM.png" alt="ReefManager Import">
-        </div>
-
-        <h2>📉 Prognose & Warnung</h2>
-        <ul>
-            <li><span class="hl">Pfeile:</span> Ein kleiner Pfeil neben der Menge zeigt dir die Tendenz deines Verbrauchs an (↑ Steigend, ↓ Sinkend, → Stabil).</li>
-            <li><span class="hl">Rotes Blinken:</span> Ein Warnsignal, wenn dein Vorrat für die nächsten typischen Dosierungen nicht mehr ausreicht.</li>
-        </ul>
-
-        <div style="text-align:center; margin-top:40px;">
-            <p>Probleme? <a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" style="color:var(--primary);">Bug melden auf GitHub</a></p>
-        </div>
+        <p>Dieses Handbuch erklärt dir die Funktionen deiner Lagerverwaltung.</p>
+        <div class="cat-header" style="margin-top:20px;">📦 Lagerbestand</div>
+        <p>Über das Dashboard hast du Zugriff auf alle Bestände. Blinkt ein Wert <span style="color:var(--danger); font-weight:bold;">ROT</span>, reicht der Vorrat für weniger als 5 Dosierungen.</p>
+        <div class="cat-header">📊 Import-Assistent</div>
+        <p>Kopiere deine Ergebnistabelle aus dem Osci-Motion Rechner (Namen und ml-Werte) oder erstelle einen Screenshot aus der ReefManager App und kopiere den Text.</p>
+        <img src="import cr osci.png">
+        <img src="Import RM.png">
+        <div style="text-align:center; margin-top:30px;"><a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" style="color:var(--primary);">Bug melden auf GitHub</a></div>
     </div>
+    <div class="footer-container"><img src="footer.png" class="footer-img"></div>
 </div>
 </body>
 </html>
