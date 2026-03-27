@@ -12,42 +12,20 @@
     <nav class="top-nav">
         <a href="handbuch.html" class="nav-link">📖 Hilfe</a>
         <a href="stats.html" class="nav-link">📈 Statistik</a>
+        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
+        <a href="import.html" class="nav-link">📊 Import</a>
         <a href="changelog.html" class="nav-link">🛠️ Logs</a>
     </nav>
     <div id="status" class="status-bar">Verbinde...</div>
     <div id="lagerContainer"></div>
-    
-    <div class="collapsible-bar" onclick="ui.toggleColl(this)"><div>⚖️ Messstation (Wiegen)</div><span>+</span></div>
-    <div class="content">
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-            <select id="prodSelect"><option value="">Wähle Produkt...</option></select>
-            <div style="display: flex; gap: 10px;">
-                <select id="gebindeSelect" style="flex:1;"><option value="9.3">30ml (9,3g)</option><option value="18.5">100ml (18,5g)</option><option value="57" selected>1L (57g)</option><option value="260">5L (260g)</option><option value="440">10L (440g)</option></select>
-                <input type="number" id="weightInput" style="flex:1;" placeholder="Gramm" oninput="measuring.calculate()">
-            </div>
-            <div id="calcResult" style="text-align:center; font-weight:bold; font-size: 2.5rem; color: var(--primary); padding:10px;">0</div>
-            <button class="nav-link" style="justify-content:center; background:var(--primary); color:black; border:none; width:100%;" onclick="measuring.updateStock()">Ergebnis übernehmen</button>
-        </div>
-    </div>
-
-    <div class="collapsible-bar" onclick="ui.toggleColl(this)"><div>📊 Import (Dosierung)</div><span>+</span></div>
-    <div class="content">
-        <textarea id="importText" placeholder="Text einfügen..." rows="4"></textarea>
-        <button class="nav-link" style="justify-content:center; background:#673AB7; color:white; border:none; width:100%; margin-top:10px;" onclick="importer.process()">Dosierung verbuchen</button>
-    </div>
     <div class="footer-container"><img src="footer.png" class="footer-img"></div>
 </div>
 
+<!-- MODALS -->
 <div id="addModal" class="modal-overlay"><div class="modal-content"><h3 id="addModalTitle" style="color:var(--primary); margin-top:0;">Zukauf</h3><div id="addModalOptions"></div><button onclick="ui.closeModals()" class="nav-link" style="width:100%; justify-content:center; margin-top:10px; border:none;">Abbrechen</button></div></div>
 <div id="remModal" class="modal-overlay"><div class="modal-content"><h3 id="remModalTitle" style="color:var(--danger); margin-top:0;">Entnahme</h3><input type="number" id="remInput" style="font-size:2rem; text-align:center; color:var(--primary);" placeholder="0.00" inputmode="decimal"><span id="modalUnit" style="display:block; margin:10px 0;">ml</span><button id="remConfirmBtn" class="big-btn btn-blue" style="background:var(--danger)">ABZIEHEN</button><button onclick="ui.closeModals()" class="nav-link" style="width:100%; justify-content:center; margin-top:10px; border:none; background:none;">Abbrechen</button></div></div>
-<div id="importSummaryModal" class="modal-overlay"><div class="modal-content" style="max-width: 450px;"><h3 style="color:var(--success); margin-top:0;">Import erfolgreich</h3><p style="font-size:0.8rem; color:#aaa;">Abgezogen:</p><div id="importSummaryList" style="max-height: 300px; overflow-y: auto; margin: 15px 0; border: 1px solid #333; border-radius: 8px;"></div><button onclick="ui.closeModals()" class="big-btn btn-blue" style="width:100%;">OK</button></div></div>
 
-<!-- REIHENFOLGE GEÄNDERT: measuring vor ui -->
-<script src="config.js"></script>
-<script src="measuring.js"></script>
-<script src="import.js"></script>
-<script src="ui.js"></script>
-<script src="core.js"></script>
+<script src="config.js"></script><script src="core.js"></script><script src="ui.js"></script>
 <script>window.onload = () => { if(typeof core !== 'undefined' && core.init) core.init(); };</script>
 </body>
 </html>
