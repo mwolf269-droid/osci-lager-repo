@@ -18,7 +18,6 @@
         
         .warn-box { background: rgba(255, 75, 43, 0.1); border: 1px solid #ff4b2b; padding: 15px; border-radius: 10px; color: #ffcccc; margin: 20px 0; }
         
-        /* BILD-FIX: Damit nichts übersteht */
         .feature-item { background: #1f1f1f; padding: 20px; border-radius: 12px; border: 1px solid #333; margin-top: 15px; overflow: hidden; box-sizing: border-box; }
         .feature-item img { 
             max-width: 100%; 
@@ -39,11 +38,11 @@
     
     <!-- EINHEITLICHE NAVIGATION -->
     <nav class="top-nav">
-        <a href="index.html" class="nav-link">📦 Lager</a>
-        <a href="stats.html" class="nav-link">📈 Statistik</a>
-        <a href="import.html" class="nav-link">📊 Import</a>
-        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
         <a href="handbuch.html" class="nav-link active">📖 Hilfe</a>
+        <a href="stats.html" class="nav-link">📈 Statistik</a>
+        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
+        <a href="import.html" class="nav-link">📊 Import</a>
+        <a href="index.html" class="nav-link">📦 Lager</a>
         <a href="changelog.html" class="nav-link">🛠️ Logs</a>
     </nav>
 
@@ -56,15 +55,26 @@
         <h2>📦 Das digitale Regal (Dashboard)</h2>
         <p>Im Lager behältst du die volle Kontrolle über alle Zusätze:</p>
         <ul>
-            <li><span class="hl">Zukauf (+):</span> Ein Klick auf das grüne Plus lässt dich vordefinierte Gebindegrößen sofort hinzufügen.</li>
-            <li><span class="hl">Entnahme (-):</span> Über das rote Minus gibst du individuelle Mengen ab. Das System berechnet den Restbestand in Echtzeit.</li>
-            <li><span class="hl">ICP-Ninja:</span> Ocean Checks ziehst du per Klick sofort ab. Schnell und unkompliziert.</li>
-            <li><span class="hl">Prognose:</span> Kleine Pfeile (↑ ↓ →) zeigen dir die Tendenz deines Verbrauchs an.</li>
+            <li><span class="hl">Zukauf (+):</span> Füge vordefinierte Gebindegrößen sofort hinzu.</li>
+            <li><span class="hl">Entnahme (-):</span> Protokolliere individuelle Mengen. Das System berechnet den Restbestand in Echtzeit.</li>
+            <li><span class="hl">ICP-Ninja:</span> Ocean Checks ziehst du per Klick sofort ab.</li>
         </ul>
 
         <div class="warn-box">
             <strong>Intelligente Warnung:</strong> Wenn ein Wert <span class="hl">rot blinkt</span>, reicht dein Vorrat statistisch gesehen für weniger als 5 deiner typischen Dosierungen aus.
         </div>
+
+        <h2>📈 Statistik & Trend-Analyse</h2>
+        <p>Daten sind der Schlüssel zum Erfolg. Die App wertet deinen Verbrauch für dich aus:</p>
+        <ul>
+            <li><span class="hl">Verbrauchs-Graph:</span> Unter dem Punkt "Statistik" siehst du die letzten 12 Entnahmen als Verlaufskurve.</li>
+            <li><span class="hl">Trendlinie:</span> Die rote gestrichelte Linie im Graph zeigt dir die mathematische Tendenz. Steigt dein Dosierbedarf oder sinkt er?</li>
+            <li><span class="hl">Dashboard-Prognose:</span> Direkt neben deinem Lagerbestand findest du kleine Pfeile:
+                <br>↑ <span style="color:var(--danger)">Steigend</span> (Verbrauch hat zugenommen)
+                <br>↓ <span style="color:var(--success)">Sinkend</span> (Verbrauch ist rückläufig)
+                <br>→ <span style="color:#666">Stabil</span> (Konstanter Verbrauch)
+            </li>
+        </ul>
 
         <h2>📊 Der Import-Assistent</h2>
         <p>Importiere deine Verbräuche ohne mühsames Abtippen. Kopiere einfach die Daten direkt in das Importfeld:</p>
@@ -99,7 +109,7 @@
             <a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" style="color:var(--primary); font-weight:bold; text-decoration: underline;">
                 Bug oder Feature auf GitHub melden
             </a>
-            <p style="margin-top: 15px; font-size: 0.7rem; color: #666;">Version 1.0.0 | Handbuch Stand: März 2026</p>
+            <p style="margin-top: 15px; font-size: 0.7rem; color: #666;">Version 1.2.0 | Handbuch Stand: März 2026</p>
         </div>
     </div>
 
