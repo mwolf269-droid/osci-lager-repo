@@ -47,22 +47,50 @@ const ui = {
             let catCard = document.createElement('div'); catCard.className = 'cat-card';
             let html = `<div class="cat-header">${cat}</div><table>`;
             for (const p in productStructure[cat]) {
-                const pData = productStructure[cat][p]; const data = core.stockData[p] || { qty: 0, h: [] }; const sId = core.getSafeId(p);
+                const pData = productStructure[cat][p]; 
+                const data = core.stockData[p] || { qty: 0, h: [] }; 
+                const sId = core.getSafeId(p);
+                
+                // --- TREND LOGIK ---
+                const hVals = (data.h || []).map(e => typeof e === 'object' ? e.v : e);
+                let trendHtml = '';
+                if(hVals.length >= 2) {
+                    const last = hVals[hVals.length - 1];
+                    const prev = hVals[hVals.length - 2];
+                    const diff = ((last - prev) / prev) * 100;
+                    
+                    if(diff > 5) { 
+                        trendHtml = `<span class="trend-icon up" title="Verbrauch steigend">↑</span>`; 
+                    } else if(diff < -5) { 
+                        trendHtml = `<span class="trend-icon down" title="Verbrauch sinkend">↓</span>`; 
+                    } else { 
+                        trendHtml = `<span class="trend-icon stable" title="Verbrauch gleichbleibend">→</span>`; 
+                    }
+                }
+
                 const last5 = (data.h || []).slice(-5).map(i => typeof i === 'object' ? i.v : i);
                 let avg = last5.length ? core.r3(last5.reduce((a, b) => a + b, 0) / last5.length) : 0;
                 let isWarn = avg > 0 && (parseFloat(data.qty) || 0) < avg;
-                html += `<tr class="prod-row" onclick="ui.toggleHistory('${sId}')"><td class="td-name"><span class="prod-link">${p}</span><a href="${pData.l}" target="_blank" class="shop-btn" onclick="event.stopPropagation()">Shop</a></td><td class="td-stand"><span class="stock-val ${isWarn?'low-stock':''}">${data.qty||0}${pData.u}</span><span class="avg-info">${avg>0?'Ø '+avg:''}</span></td><td><button class="btn-sm btn-plus" onclick="event.stopPropagation(); ui.openAddModal('${p}')">+</button></td><td><button class="btn-sm btn-minus" onclick="event.stopPropagation(); ui.openRemModal('${p}')">−</button></td></tr><tr id="hist-row-${sId}" class="history-row"><td colspan="4"><div class="history-container"><span style="color:var(--primary); font-size:0.7rem; font-weight:bold; width:100%; display:block; margin-bottom:5px;">LOGS (Max 12):</span>${(data.h && data.h.length > 0) ? data.h.slice(-12).reverse().map((e, i) => {
+
+                html += `<tr class="prod-row" onclick="ui.toggleHistory('${sId}')">
+                    <td class="td-name"><span class="prod-link">${p}</span><a href="${pData.l}" target="_blank" class="shop-btn" onclick="event.stopPropagation()">Shop</a></td>
+                    <td class="td-stand">
+                        <div style="display:flex; align-items:center; justify-content:flex-end; gap:5px;">
+                            ${trendHtml}
+                            <span class="stock-val ${isWarn?'low-stock':''}">${data.qty||0}${pData.u}</span>
+                        </div>
+                        <span class="avg-info">${avg>0?'Ø '+avg:''}</span>
+                    </td>
+                    <td><button class="btn-sm btn-plus" onclick="event.stopPropagation(); ui.openAddModal('${p}')">+</button></td>
+                    <td><button class="btn-sm btn-minus" onclick="event.stopPropagation(); ui.openRemModal('${p}')">−</button></td>
+                </tr><tr id="hist-row-${sId}" class="history-row"><td colspan="4"><div class="history-container"><span style="color:var(--primary); font-size:0.7rem; font-weight:bold; width:100%; display:block; margin-bottom:5px;">LOGS (Max 12):</span>${(data.h && data.h.length > 0) ? data.h.slice(-12).reverse().map((e, i) => {
                     const v = typeof e === 'object' ? e.v : e; const t = typeof e === 'object' ? e.t : '--';
                     return `<div class="history-item"><span style="font-size:0.6rem; color:#666;">${t}</span> <b>${v}${pData.u}</b><button class="history-del" onclick="event.stopPropagation(); core.stockData['${p}'].h.splice(${data.h.length-1-i},1); core.save();">×</button></div>`;
                 }).join('') : "Keine Einträge"}</div></td></tr>`;
             }
             html += `</table>`; catCard.innerHTML = html; container.appendChild(catCard);
         }
-        
-        // Dropdown in der Messstation befüllen
-        if (typeof measuring !== 'undefined' && typeof measuring.fill === 'function') {
-            measuring.fill();
-        }
+        if (window.measuring && typeof measuring.fill === 'function') measuring.fill();
     },
 
     toggleHistory(sId) {
