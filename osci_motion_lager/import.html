@@ -17,17 +17,43 @@
         <a href="handbuch.html" class="nav-link">📖 Hilfe</a>
         <a href="changelog.html" class="nav-link">🛠️ Logs</a>
     </nav>
-   <div class="section-card">
+
+    
+    <div class="section-card">
         <div class="section-header">📊 Analyse-Daten einfügen</div>
         <div style="padding: 20px;">
-            <textarea id="importText" placeholder="Kopierte Tabelle hier einfügen..." rows="10" style="margin-bottom: 15px;"></textarea>
-            <button class="nav-link active" style="background:#673AB7; padding: 15px; width: 100%; border: none; font-size: 0.9rem;" onclick="importer.process()">DATEN VERBUCHEN</button>
+            <textarea id="importText" placeholder="Kopierte Tabelle hier einfügen..." rows="10" style="margin-bottom: 20px; font-family: monospace;"></textarea>
+            
+            <!-- Button mit dem korrekten Big-Button Style -->
+            <button class="big-btn btn-blue" style="background:#673AB7; width: 100%;" onclick="importer.process()">
+                DATEN VERBUCHEN
+            </button>
         </div>
     </div>
     <div class="footer-container"><img src="footer.png" class="footer-img"></div>
 </div>
-<div id="importSummaryModal" class="modal-overlay"><div class="modal-content"><h3 style="color:var(--success); margin-top: 0;">Import erfolgreich</h3><div id="importSummaryList" style="max-height: 300px; overflow-y: auto; margin: 15px 0;"></div><button onclick="ui.closeModals()" class="nav-link active" style="width: 100%; padding: 12px; border: none;">OK</button></div></div>
-<script src="config.js"></script><script src="core.js"></script><script src="ui.js"></script><script src="import.js"></script>
-<script>window.onload = () => core.init();</script>
+
+<!-- Modal für die Zusammenfassung -->
+<div id="importSummaryModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 450px;">
+        <h3 style="color:var(--success); margin-top: 0;">Import erfolgreich</h3>
+        <p style="font-size:0.8rem; color:#aaa;">Folgende Mengen wurden abgezogen:</p>
+        <div id="importSummaryList" style="max-height: 300px; overflow-y: auto; margin: 15px 0; border: 1px solid #333; border-radius: 8px;"></div>
+        <button onclick="ui.closeModals()" class="big-btn btn-blue" style="width:100%;">OK</button>
+    </div>
+</div>
+
+<!-- WICHTIG: Die Reihenfolge der Skripte -->
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script src="ui.js"></script>
+<script src="import.js"></script>
+<script>
+    window.onload = async () => { 
+        if(typeof core !== 'undefined' && core.init) {
+            await core.init(); 
+        }
+    };
+</script>
 </body>
 </html>
