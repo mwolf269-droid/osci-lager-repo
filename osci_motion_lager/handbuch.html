@@ -2,33 +2,161 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Handbuch - Osci Lager</title>
+    <title>Handbuch - Osci-Lager Guide</title>
     <style>
-        :root { --primary: #00d2ff; --bg: #0b0b0b; --card: #161616; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; line-height: 1.6; }
-        .card { background: var(--card); padding: 30px; border-radius: 15px; width: 100%; max-width: 800px; border: 1px solid #2a2a2a; }
-        .nav-back { color: var(--primary); text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block; }
-        h3 { color: var(--primary); border-bottom: 1px solid #333; padding-bottom: 5px; }
+        :root { 
+            --primary: #00d2ff; 
+            --bg: #0b0b0b; 
+            --card: #161616; 
+            --text: #ffffff; 
+            --accent: #success;
+        }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            line-height: 1.7; 
+        }
+        .card { 
+            background: var(--card); 
+            padding: 40px; 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 850px; 
+            border: 1px solid #2a2a2a; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+        .nav-back { 
+            color: var(--primary); 
+            text-decoration: none; 
+            font-weight: bold; 
+            margin-bottom: 30px; 
+            display: inline-flex; 
+            align-items: center;
+            transition: 0.3s;
+        }
+        .nav-back:hover { transform: translateX(-5px); opacity: 0.8; }
+        
+        h1 { color: var(--primary); font-size: 2.2rem; margin-bottom: 10px; text-align: center; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 40px; font-style: italic; }
+        
+        h2 { 
+            color: var(--primary); 
+            border-left: 4px solid var(--primary); 
+            padding-left: 15px; 
+            margin-top: 40px; 
+            font-size: 1.5rem;
+            background: rgba(0, 210, 255, 0.05);
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+        
+        h3 { color: #eee; margin-top: 25px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+        
+        p { margin-bottom: 15px; color: #ccc; }
+        
+        ul { padding-left: 20px; list-style-type: none; }
+        li { margin-bottom: 15px; position: relative; padding-left: 25px; }
+        li::before { content: '▹'; position: absolute; left: 0; color: var(--primary); font-weight: bold; }
+        
         .hl { color: var(--primary); font-weight: bold; }
-        .bug-section { background: rgba(0,210,255,0.05); border: 1px solid var(--primary); padding: 20px; border-radius: 12px; margin-top: 30px; }
+        .warn-box { background: rgba(255, 75, 43, 0.1); border: 1px solid #ff4b2b; padding: 15px; border-radius: 10px; color: #ffcccc; margin: 20px 0; }
+        
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .feature-item { background: #1f1f1f; padding: 15px; border-radius: 12px; border: 1px solid #333; }
+
+        .bug-section {
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(103, 58, 183, 0.1));
+            border: 1px solid var(--primary);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 50px;
+            text-align: center;
+        }
+        
+        .bug-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #fff;
+            background: var(--primary);
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .bug-link:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0, 210, 255, 0.4); }
+
+        code { background: #222; padding: 2px 6px; border-radius: 4px; color: var(--primary); font-family: monospace; }
     </style>
 </head>
 <body>
     <div class="card">
-        <a href="index.html" class="nav-back">← Zurück zum Lager</a>
-        <h2>📖 Benutzerhandbuch</h2>
-        <h3>Bestand</h3>
-        <p><span class="hl">Zukauf:</span> Über Plus. <span class="hl">Entnahme:</span> Über Minus. <span class="hl">ICP:</span> Sofort-Abzug (1 Stk).</p>
-        <h3>Statistik & Trend</h3>
-        <p>Die App speichert die letzten <span class="hl">12 Verbräuche</span> mit Datum. Unter "Statistik" siehst du den Verlauf und eine rote Trendlinie.</p>
-        <h3>Warnung</h3>
-        <p>Ein Produkt blinkt <span class="hl">rot</span>, wenn der Vorrat geringer ist als der Durchschnitt der letzten 5 Entnahmen.</p>
-        <h3>Import</h3>
-        <p>Kopiere Dosier-Tabellen einfach ein. Die App erkennt Kürzel (NaCl, F, Ni). Die Ziffer <span class="hl">"1"</span> wird als <span class="hl">Jod (I)</span> erkannt.</p>
+        <a href="index.html" class="nav-back">← Zurück zum Dashboard</a>
+        
+        <h1>Willkommen in deinem Osci-Lager</h1>
+        <p class="subtitle">Präzision für dein Riff – Einfach. Schnell. Übersichtlich.</p>
+
+        <p>Ein gesundes Aquarium braucht Beständigkeit. Das <span class="hl">Osci-Lager</span> nimmt dir das Rätselraten ab und sorgt dafür, dass du nie wieder vor leeren Flaschen stehst oder mühsam ml-Stände schätzen musst.</p>
+
+        <h2>📦 Dein digitales Regal</h2>
+        <p>Behalte all deine Zusätze im Blick. Die App ist in Kategorien unterteilt, genau wie dein echtes Lager.</p>
+        
+        <div class="feature-grid">
+            <div class="feature-item">
+                <span class="hl">➕ Zukauf:</span> Hast du Nachschub bestellt? Klicke auf das Plus und wähle die Gebindegröße aus. Kein Tippen nötig!
+            </div>
+            <div class="feature-item">
+                <span class="hl">➖ Entnahme:</span> Gib einfach ein, wie viel ml du entnommen hast. Die App berechnet den Rest sofort.
+            </div>
+            <div class="feature-item">
+                <span class="hl">⚡ ICP-Shortcut:</span> Deine Ocean Checks ziehst du per Klick sofort ab. Schnell wie ein Ninja!
+            </div>
+            <div class="feature-item">
+                <span class="hl">📜 Transparenz:</span> Ein Klick auf den Namen zeigt dir die Historie deiner letzten Buchungen – inklusive Datum!
+            </div>
+        </div>
+
+        <h2>🧠 Intelligente Warnungen</h2>
+        <div class="warn-box">
+            <strong>Der "Blink"-Effekt:</strong> Wenn ein Wert in deinem Lager <span class="hl">rot blinkt</span>, ist es Zeit zu handeln! Das System vergleicht deinen Restbestand mit dem Durchschnitt deiner letzten 5 Entnahmen. Reicht der Vorrat nicht mehr für eine typische Dosis? Dann warnt dich die App visuell.
+        </div>
+
+        <h2>⚖️ Das Labor (Messstation)</h2>
+        <p>Schluss mit dem Schätzen von ml-Ständen in halbvollen Flaschen. Nutze die Physik!</p>
+        <ul>
+            <li>Wähle dein Produkt und die Flaschengröße aus.</li>
+            <li>Stelle die Flasche auf eine Küchenwaage und gib das Gewicht in Gramm ein.</li>
+            <li>Die App kennt die <span class="hl">Dichte</span> jedes Produkts und zieht das Eigengewicht (Tara) der Flasche ab.</li>
+            <li>Klicke auf "Übernehmen" und dein Lagerstand ist auf den Milliliter genau kalibriert.</li>
+        </ul>
+
+        <h2>📈 Statistiken & Trends</h2>
+        <p>Unter dem Punkt <span class="hl">Statistik</span> erwachen deine Daten zum Leben. Hier kannst du für jedes Produkt die letzten 12 Verbräuche einsehen.</p>
+        <ul>
+            <li><strong>Der Graph:</strong> Verfolge visuell, wie sich dein Verbrauch über die Zeit entwickelt.</li>
+            <li><strong>Die Trendlinie:</strong> Eine rote Linie zeigt dir die Tendenz. Brauchen deine Korallen gerade mehr oder weniger? Der Trend verrät es dir.</li>
+        </ul>
+
+        <h2>📊 Der Import-Assistent</h2>
+        <p>Hast du eine Analyse von ATI oder Osci-Motion erhalten? Kopiere die Tabelle oder den Text einfach komplett in das Importfeld.</p>
+        <ul>
+            <li><strong>Flexibel:</strong> Ob die Daten untereinander oder nebeneinander stehen, spielt keine Rolle.</li>
+            <li><strong>Der Jod-Fix:</strong> Ein "I" (Jod) wird beim Kopieren oft als "1" erkannt. Deine App ist schlau genug, das zu korrigieren und ordnet die Menge automatisch dem Jod zu.</li>
+            <li><strong>Summary:</strong> Nach dem Import zeigt dir eine übersichtliche Tabelle genau an, was erfolgreich verbucht wurde.</li>
+        </ul>
+
         <div class="bug-section">
-            <h3 style="border:none;">🐞 Bugreporting</h3>
-            <p>Probleme bitte hier melden:</p>
-            <a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" style="color:var(--primary);">GitHub Issues</a>
+            <h3 style="justify-content: center;">🚀 Gemeinsam besser werden</h3>
+            <p>Diese App wird von einem Hobbyisten für Hobbyisten entwickelt. Hast du einen Fehler gefunden oder eine geniale Idee für ein neues Feature?</p>
+            <a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" class="bug-link">
+                🐞 Bug oder Feature melden
+            </a>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: #888;">Version 1.1.0 | Handbuch Stand: März 2026</p>
         </div>
     </div>
 </body>
