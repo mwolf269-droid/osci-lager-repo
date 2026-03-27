@@ -6,92 +6,61 @@
     <title>Statistik - Osci Lager</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .stats-card { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .chart-container { position: relative; height: 300px; width: 100%; margin: 20px 0; }
-        .stats-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        .stats-table th { text-align: left; color: var(--primary); border-bottom: 1px solid #333; padding: 10px; }
-        .stats-table td { padding: 10px; border-bottom: 1px solid #222; }
-    </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="header-container"><img src="header.png" class="banner-img"></div>
-       <nav class="top-nav">
-    <a href="handbuch.html" class="nav-link">📖 Hilfe</a>
-    <a href="stats.html" class="nav-link">📈 Statistik</a>
-    <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
-    <a href="import.html" class="nav-link">📊 Import</a>
-    <a href="changelog.html" class="nav-link">🛠️ Logs</a>
-</nav>
-        <div class="stats-card">
-            <h3 id="statTitle" style="color:var(--primary); margin:0;">Verbrauchsverlauf</h3>
-            <div class="chart-container"><canvas id="consumptionChart"></canvas></div>
-        </div>
-        <div class="stats-card">
-            <h3 style="color:var(--primary);">Verlaufstabelle</h3>
-            <table class="stats-table">
-                <thead><tr><th>Datum</th><th>Menge</th><th>Trend</th></tr></thead>
-                <tbody id="statTableBody"></tbody>
-            </table>
-        </div>
-        <div class="footer-container"><img src="footer.png" class="footer-img"></div>
+<div class="app-container">
+    <div class="header-container"><img src="header.png" class="banner-img"></div>
+    <nav class="top-nav">
+        <a href="handbuch.html" class="nav-link">📖 Hilfe</a>
+        <a href="stats.html" class="nav-link active">📈 Statistik</a>
+        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
+        <a href="import.html" class="nav-link">📊 Import</a>
+        <a href="index.html" class="nav-link">📦 Lager</a>
+        <a href="changelog.html" class="nav-link">🛠️ Logs</a>
+    </nav>
+    <select id="statProdSelect" onchange="renderStats()" style="margin-bottom:20px;"></select>
+    <div class="cat-card" style="padding:20px;">
+        <h3 style="color:var(--primary); margin:0 0 15px 0;">Verbrauchsverlauf</h3>
+        <div style="height:300px;"><canvas id="consumptionChart"></canvas></div>
     </div>
-    <script src="config.js"></script>
-    <script src="core.js"></script>
-    <script src="ui.js"></script>
-    <script>
-        let myChart = null;
-        window.onload = async () => { 
-            await core.init(); 
-            fillDropdown(); 
-            renderStats(); 
-        };
-        function fillDropdown() {
-            const sel = document.getElementById('statProdSelect');
-            sel.innerHTML = '<option value="">Wähle Produkt...</option>';
-            for (let cat in productStructure) {
-                let g = document.createElement('optgroup'); g.label = cat;
-                for (let p in productStructure[cat]) {
-                    let o = document.createElement('option'); o.value = p; o.innerText = p; g.appendChild(o);
-                }
-                sel.appendChild(g);
-            }
+    <div class="cat-card"><div class="cat-header">Verlaufstabelle</div><table id="statTableBody" style="width:100%;"></table></div>
+    <div class="footer-container"><img src="footer.png" class="footer-img"></div>
+</div>
+<script src="config.js"></script><script src="core.js"></script><script src="ui.js"></script>
+<script>
+    let myChart = null;
+    window.onload = async () => { await core.init(); fillDropdown(); renderStats(); };
+    function fillDropdown() {
+        const sel = document.getElementById('statProdSelect'); sel.innerHTML = '';
+        for (let c in productStructure) {
+            let g = document.createElement('optgroup'); g.label = c;
+            for (let p in productStructure[c]) { let o = document.createElement('option'); o.value = p; o.innerText = p; g.appendChild(o); }
+            sel.appendChild(g);
         }
-        function calculateTrend(data) {
-            const n = data.length; if (n < 2) return data;
-            let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-            for (let i = 0; i < n; i++) { sumX += i; sumY += data[i]; sumXY += i * data[i]; sumX2 += i * i; }
-            const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-            const intercept = (sumY - slope * sumX) / n;
-            return data.map((_, i) => slope * i + intercept);
-        }
-        function renderStats() {
-            const p = document.getElementById('statProdSelect').value; if (!p) return;
-            const history = (core.stockData[p]?.h || []);
-            const labels = history.map(e => typeof e === 'object' ? e.t : '--');
-            const values = history.map(e => typeof e === 'object' ? e.v : e);
-            const unit = ui.getProdData(p).u;
-            
-            document.getElementById('statTableBody').innerHTML = history.slice().reverse().map((e, i) => {
-                const v = typeof e === 'object' ? e.v : e; const t = typeof e === 'object' ? e.t : '--';
-                return `<tr><td>${t}</td><td><b>${v} ${unit}</b></td><td>-</td></tr>`;
-            }).join('');
-
-            const ctx = document.getElementById('consumptionChart').getContext('2d');
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{ label: 'Verbrauch', data: values, borderColor: '#00d2ff', backgroundColor: 'rgba(0,210,255,0.1)', fill: true, tension: 0.3 },
-                               { label: 'Trend', data: calculateTrend(values), borderColor: '#ff4b2b', borderDash: [5,5], pointRadius: 0 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } },
-                           scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } }
-                }
-            });
-        }
-    </script>
+    }
+    function calculateTrend(data) {
+        const n = data.length; if (n < 2) return data;
+        let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+        for (let i = 0; i < n; i++) { sumX += i; sumY += data[i]; sumXY += i * data[i]; sumX2 += i * i; }
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+        return data.map((_, i) => slope * i + intercept);
+    }
+    function renderStats() {
+        const p = document.getElementById('statProdSelect').value; if (!p) return;
+        const history = (core.stockData[p]?.h || []);
+        const labels = history.map(e => typeof e === 'object' ? e.t : '--');
+        const values = history.map(e => typeof e === 'object' ? e.v : e);
+        const unit = ui.getProdData(p).u;
+        document.getElementById('statTableBody').innerHTML = history.slice().reverse().map(e => `<tr><td style="padding:10px;">${typeof e === 'object' ? e.t : '--'}</td><td style="padding:10px; text-align:right;"><b>${typeof e === 'object' ? e.v : e} ${unit}</b></td></tr>`).join('');
+        const ctx = document.getElementById('consumptionChart').getContext('2d');
+        if (myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets: [{ label: 'Verbrauch', data: values, borderColor: '#00d2ff', backgroundColor: 'rgba(0,210,255,0.1)', fill: true, tension: 0.3 }, { label: 'Trend', data: calculateTrend(values), borderColor: '#ff4b2b', borderDash: [5,5], pointRadius: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: '#888' }, grid: { color: '#222' } }, x: { ticks: { color: '#888' }, grid: { color: '#222' } } } }
+        });
+    }
+</script>
 </body>
 </html>
