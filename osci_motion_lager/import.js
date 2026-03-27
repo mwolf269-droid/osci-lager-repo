@@ -5,8 +5,6 @@ const importer = {
         if (!text) return;
 
         let itemsFound = [];
-
-        // --- HORIZONTALER IMPORT ---
         const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         if (lines.length >= 2) {
             const headers = lines[0].split(/\t|\s{2,}/).map(h => h.trim());
@@ -22,7 +20,6 @@ const importer = {
             }
         }
 
-        // --- VERTIKALER STREAM IMPORT ---
         if (itemsFound.length === 0) {
             const amountRegex = /([\d,.-]+)\s*(ml|m|Stk|g)\b/gi;
             let match, lastIndex = 0;
@@ -54,7 +51,7 @@ const importer = {
         for (let cat in productStructure) {
             for (let p in productStructure[cat]) {
                 const symbol = p.match(/\(([^)]+)\)/)?.[1]?.toLowerCase() || "";
-                if (str === "1" && symbol === "i") return p; // Jod-Fix
+                if (str === "1" && symbol === "i") return p;
                 if (symbol === str || p.toLowerCase().includes(str)) return p;
             }
         }
@@ -71,7 +68,7 @@ const importer = {
                 const nRegex = new RegExp(`\\b${name}\\b`, 'i');
                 let sMatch = symbol ? text.search(sRegex) : -1;
                 let nMatch = text.search(nRegex);
-                if (symbol.toLowerCase() === "i") { // Jod-Fix
+                if (symbol.toLowerCase() === "i") {
                     let fMatch = text.search(/(?<![\d.])\b1\b(?![\d.])/);
                     if (fMatch > sMatch) sMatch = fMatch;
                 }
