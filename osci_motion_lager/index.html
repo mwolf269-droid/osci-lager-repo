@@ -10,20 +10,45 @@
 <div class="app-container">
     <div class="header-container"><img src="header.png" class="banner-img"></div>
     <nav class="top-nav">
-        <a href="index.html" class="nav-link active">📦 Lager</a>
-        <a href="stats.html" class="nav-link">📈 Statistik</a>
-        <a href="import.html" class="nav-link">📊 Import</a>
-        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
         <a href="handbuch.html" class="nav-link">📖 Hilfe</a>
+        <a href="stats.html" class="nav-link">📈 Statistik</a>
+        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
+        <a href="import.html" class="nav-link">📊 Import</a>
+        <a href="index.html" class="nav-link active">📦 Lager</a>
         <a href="changelog.html" class="nav-link">🛠️ Logs</a>
     </nav>
     <div id="status" class="status-bar">Verbinde...</div>
     <div id="lagerContainer"></div>
     <div class="footer-container"><img src="footer.png" class="footer-img"></div>
 </div>
-<div id="addModal" class="modal-overlay"><div class="modal-content"><h3 id="addModalTitle">Zukauf</h3><div id="addModalOptions"></div><button onclick="ui.closeModals()" class="nav-link" style="width:100%; margin-top:10px;">Abbrechen</button></div></div>
-<div id="remModal" class="modal-overlay"><div class="modal-content"><h3 id="remModalTitle">Entnahme</h3><input type="number" id="remInput" style="font-size:2rem; text-align:center;"><button id="remConfirmBtn" class="big-btn btn-blue" style="background:var(--danger); margin-top:10px;">ABZIEHEN</button><button onclick="ui.closeModals()" class="nav-link" style="width:100%; margin-top:10px;">Abbrechen</button></div></div>
-<script src="config.js"></script><script src="core.js"></script><script src="ui.js"></script>
-<script>window.onload = () => { if(typeof core !== 'undefined' && core.init) core.init(); };</script>
+
+<!-- MODALS -->
+<div id="addModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="addModalTitle" style="color:var(--primary); margin-top:0;">Zukauf</h3>
+        <div id="addModalOptions"></div>
+        <button onclick="ui.closeModals()" class="nav-link" style="width:100%; margin-top:10px; border:none; background:none;">Abbrechen</button>
+    </div>
+</div>
+
+<div id="remModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="remModalTitle" style="color:var(--danger); margin-top:0;">Entnahme</h3>
+        <input type="number" id="remInput" style="font-size:2rem; text-align:center; color:var(--primary);" placeholder="0.00" step="0.01">
+        <span id="modalUnit" style="display:block; margin:10px 0; color:#666;">ml</span>
+        <button id="remConfirmBtn" class="big-btn btn-blue" style="background:var(--danger); margin-top:10px;">ABZIEHEN</button>
+        <button onclick="ui.closeModals()" class="nav-link" style="width:100%; margin-top:10px; border:none; background:none;">Abbrechen</button>
+    </div>
+</div>
+
+<script src="config.js"></script>
+<script src="core.js"></script>
+<script src="ui.js"></script>
+<script src="measuring.js"></script>
+<script>
+    window.onload = () => { 
+        if(typeof core !== 'undefined' && core.init) core.init(); 
+    };
+</script>
 </body>
 </html>
