@@ -275,6 +275,17 @@ textarea, input, select {
     margin-top: -5px; 
 }
 
+/* --- HANDBUCH / MANUAL BILDER --- */
+.card img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 15px 0;
+    border-radius: 10px;
+    border: 1px solid #333;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
 /* --- HISTORIE / LOGS --- */
 .history-row { 
     display: none; 
