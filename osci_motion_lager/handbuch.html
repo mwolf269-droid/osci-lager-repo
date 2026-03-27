@@ -2,31 +2,94 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Handbuch - Osci Lager</title>
+    <title>Handbuch - Osci-Lager Guide</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Spezifische Handbuch-Styles */
+        .manual-card { background: var(--card); padding: 30px; border-radius: 20px; width: 100%; max-width: 800px; border: 1px solid #2a2a2a; margin-top: 10px; line-height: 1.7; }
+        h1 { color: var(--primary); font-size: 1.8rem; margin-bottom: 5px; text-align: center; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; font-style: italic; font-size: 0.9rem; }
+        h2 { color: var(--primary); border-left: 4px solid var(--primary); padding-left: 15px; margin-top: 35px; font-size: 1.3rem; background: rgba(0, 210, 255, 0.05); padding-top: 5px; padding-bottom: 5px; }
+        h3 { color: #eee; margin-top: 20px; font-size: 1.1rem; }
+        ul { padding-left: 20px; list-style-type: none; }
+        li { margin-bottom: 12px; position: relative; padding-left: 25px; }
+        li::before { content: '▹'; position: absolute; left: 0; color: var(--primary); font-weight: bold; }
+        .hl { color: var(--primary); font-weight: bold; }
+        .warn-box { background: rgba(255, 75, 43, 0.1); border: 1px solid #ff4b2b; padding: 15px; border-radius: 10px; color: #ffcccc; margin: 20px 0; }
+        .feature-item { background: #1f1f1f; padding: 15px; border-radius: 12px; border: 1px solid #333; margin-top: 15px; }
+        .bug-section { background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(103, 58, 183, 0.1)); border: 1px solid var(--primary); padding: 20px; border-radius: 15px; margin-top: 40px; text-align: center; }
+    </style>
 </head>
 <body>
 <div class="app-container">
     <div class="header-container"><img src="header.png" class="banner-img"></div>
+    
+    <!-- EINHEITLICHE NAVIGATION -->
     <nav class="top-nav">
-        <a href="index.html" class="nav-link">📦 Lager</a>
-        <a href="stats.html" class="nav-link">📈 Statistik</a>
-        <a href="import.html" class="nav-link">📊 Import</a>
-        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
         <a href="handbuch.html" class="nav-link active">📖 Hilfe</a>
+        <a href="stats.html" class="nav-link">📈 Statistik</a>
+        <a href="measuring.html" class="nav-link">⚖️ Wiegen</a>
+        <a href="import.html" class="nav-link">📊 Import</a>
+        <a href="index.html" class="nav-link">📦 Lager</a>
         <a href="changelog.html" class="nav-link">🛠️ Logs</a>
     </nav>
-    <div class="card">
-        <h1>Willkommen im Osci-Lager</h1>
-        <p>Dieses Handbuch erklärt dir die Funktionen deiner Lagerverwaltung.</p>
-        <div class="cat-header" style="margin-top:20px;">📦 Lagerbestand</div>
-        <p>Über das Dashboard hast du Zugriff auf alle Bestände. Blinkt ein Wert <span style="color:var(--danger); font-weight:bold;">ROT</span>, reicht der Vorrat für weniger als 5 Dosierungen.</p>
-        <div class="cat-header">📊 Import-Assistent</div>
-        <p>Kopiere deine Ergebnistabelle aus dem Osci-Motion Rechner (Namen und ml-Werte) oder erstelle einen Screenshot aus der ReefManager App und kopiere den Text.</p>
-        <img src="import cr osci.png">
-        <img src="Import RM.png">
-        <div style="text-align:center; margin-top:30px;"><a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" style="color:var(--primary);">Bug melden auf GitHub</a></div>
+
+    <div class="manual-card">
+        <h1>Dein Osci-Lager Guide</h1>
+        <p class="subtitle">Präzision für dein Riff – einfach und effizient.</p>
+
+        <p>Ein gesundes Aquarium braucht Beständigkeit. Das <span class="hl">Osci-Lager</span> sorgt dafür, dass du nie wieder vor leeren Flaschen stehst oder mühsam ml-Stände schätzen musst.</p>
+
+        <h2>📦 Das digitale Regal (Dashboard)</h2>
+        <p>Im Lager behältst du die volle Kontrolle über alle Zusätze:</p>
+        <ul>
+            <li><span class="hl">Zukauf (+):</span> Ein Klick auf das grüne Plus lässt dich vordefinierte Gebindegrößen (z.B. 1000ml) sofort hinzufügen.</li>
+            <li><span class="hl">Entnahme (-):</span> Über das rote Minus gibst du individuelle Mengen ab. Das System berechnet den Restbestand in Echtzeit.</li>
+            <li><span class="hl">ICP-Ninja:</span> Ocean Checks ziehst du per Klick sofort ab. Schnell und unkompliziert.</li>
+            <li><span class="hl">Prognose:</span> Kleine Pfeile (↑ ↓ →) zeigen dir direkt neben dem Bestand, ob dein Verbrauch im Vergleich zur letzten Dosierung steigt oder sinkt.</li>
+        </ul>
+
+        <div class="warn-box">
+            <strong>Intelligente Warnung:</strong> Wenn ein Wert <span class="hl">rot blinkt</span>, reicht dein Vorrat statistisch gesehen für weniger als 5 deiner typischen Dosierungen aus. Zeit für Nachschub!
+        </div>
+
+        <h2>📊 Der Import-Assistent</h2>
+        <p>Importiere deine Verbräuche ohne mühsames Abtippen. Kopiere einfach die Daten direkt in das Importfeld:</p>
+        
+        <div class="feature-item">
+            <h3>🛠️ Custom & Repair (Osci-Motion)</h3>
+            <p>Importiere einfach die Daten wie auf dem Bild, um deinen Verbrauch der Custom & Repair Lösung zu dokumentieren. Kopiere dazu die Ergebnistabelle (Namen und ml-Werte) aus dem Rechner.</p>
+            <img src="import cr osci.png" alt="Osci Import">
+        </div>
+
+        <div class="feature-item">
+            <h3>📱 ReefManager App (OCR-Import)</h3>
+            <p>Du kannst aus der <span class="hl">ReefManager App</span> per Screenshot die Werte als "Text" kopieren und importieren. Nutze dazu die Texterkennung (OCR) deines Smartphones auf dem Screenshot deiner Dosierwerte.</p>
+            <img src="Import RM.png" alt="ReefManager Import">
+        </div>
+
+        <ul style="margin-top: 20px;">
+            <li><span class="hl">Der Jod-Fix:</span> Da das Kürzel "I" (Jod) beim Kopieren oft als "1" erkannt wird, korrigiert die App dies automatisch und ordnet die Menge korrekt zu.</li>
+        </ul>
+
+        <h2>⚖️ Das Labor (Messstation)</h2>
+        <p>Nutze die Physik für 100% Präzision:</p>
+        <ul>
+            <li>Wähle dein Produkt und die Flaschengröße (z.B. 1L Flasche) aus.</li>
+            <li>Stelle die Flasche auf eine Waage und gib das Gewicht in Gramm ein.</li>
+            <li>Die App zieht das Leergewicht (<span class="hl">Tara</span>) der Flasche ab, berechnet über die <span class="hl">Dichte</span> den ml-Stand und überschreibt deinen Lagerbestand exakt.</li>
+        </ul>
+
+        <div class="bug-section">
+            <h3 style="margin-top: 0; justify-content: center; display: flex;">🚀 Support & Entwicklung</h3>
+            <p>Hast du einen Fehler gefunden oder eine Idee für ein neues Feature?</p>
+            <a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" style="color:var(--primary); font-weight:bold; text-decoration: underline;">
+                Bug oder Feature auf GitHub melden
+            </a>
+            <p style="margin-top: 15px; font-size: 0.7rem; color: #666;">Version 1.2.0 | Handbuch Stand: März 2026</p>
+        </div>
     </div>
+
     <div class="footer-container"><img src="footer.png" class="footer-img"></div>
 </div>
 </body>
