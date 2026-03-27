@@ -5,95 +5,30 @@
     <title>Handbuch - Osci Lager</title>
     <style>
         :root { --primary: #00d2ff; --bg: #0b0b0b; --card: #161616; --text: #ffffff; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            line-height: 1.6; 
-        }
-        .card { 
-            background: var(--card); 
-            padding: 30px; 
-            border-radius: 15px; 
-            width: 100%; 
-            max-width: 800px; 
-            border: 1px solid #2a2a2a; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .nav-back { 
-            color: var(--primary); 
-            text-decoration: none; 
-            font-weight: bold; 
-            margin-bottom: 20px; 
-            display: inline-block; 
-            transition: 0.3s;
-        }
-        .nav-back:hover { opacity: 0.7; }
-        
-        h2, h3 { color: var(--primary); border-bottom: 1px solid #333; padding-bottom: 8px; }
-        h3 { margin-top: 25px; }
-        
-        ul { padding-left: 20px; }
-        li { margin-bottom: 12px; }
-        
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; line-height: 1.6; }
+        .card { background: var(--card); padding: 30px; border-radius: 15px; width: 100%; max-width: 800px; border: 1px solid #2a2a2a; }
+        .nav-back { color: var(--primary); text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block; }
+        h3 { color: var(--primary); border-bottom: 1px solid #333; padding-bottom: 5px; }
         .hl { color: var(--primary); font-weight: bold; }
-        
-        .bug-section {
-            background: rgba(0, 210, 255, 0.05);
-            border: 1px solid var(--primary);
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 30px;
-        }
-        
-        .bug-link {
-            color: var(--primary);
-            text-decoration: underline;
-            font-weight: bold;
-        }
+        .bug-section { background: rgba(0,210,255,0.05); border: 1px solid var(--primary); padding: 20px; border-radius: 12px; margin-top: 30px; }
     </style>
 </head>
 <body>
     <div class="card">
         <a href="index.html" class="nav-back">← Zurück zum Lager</a>
         <h2>📖 Benutzerhandbuch</h2>
-
-        <h3>📦 Lagerverwaltung</h3>
-        <ul>
-            <li><span class="hl">Zukauf (+):</span> Öffnet vordefinierte Gebindegrößen zum schnellen Auffüllen.</li>
-            <li><span class="hl">Entnahme (-):</span> Eingabe individueller ml-Mengen.</li>
-            <li><span class="hl">ICP-Check:</span> Bei ICP-Produkten zieht ein Klick auf das rote Minus sofort <span class="hl">1 Stück</span> ab.</li>
-            <li><span class="hl">Logbuch:</span> Klick auf den Produktnamen zeigt die letzten 10 Buchungen an.</li>
-        </ul>
-
-        <h3>⚠️ Warnsystem</h3>
-        <p>Ein Produkt blinkt <span class="hl">rot</span>, wenn die aktuelle Füllmenge geringer ist als der Durchschnitt der letzten 5 Entnahmen.</p>
-
-        <h3>📊 Intelligenter Import</h3>
-        <p>Kopieren Sie Analyse-Tabellen einfach in das Textfeld:</p>
-        <ul>
-            <li>Unterstützt horizontale Tabellen (Namen oben, Werte unten).</li>
-            <li>Unterstützt vertikale Streams (Trace-Analysen).</li>
-            <li><span class="hl">Jod-Korrektur:</span> Erkennt automatisch eine alleinstehende <span class="hl">"1"</span> als Kürzel für <span class="hl">Jod (I)</span>.</li>
-        </ul>
-
-        <h3>⚖️ Messstation (Wiegen)</h3>
-        <ul>
-            <li>Berücksichtigt die spezifische <span class="hl">Dichte</span> jedes Produkts.</li>
-            <li>Zieht das Leergewicht (Tara) der gewählten Flaschengröße automatisch ab.</li>
-            <li>Das Ergebnis überschreibt bei Übernahme den aktuellen Lagerbestand.</li>
-        </ul>
-
+        <h3>Bestand</h3>
+        <p><span class="hl">Zukauf:</span> Über Plus. <span class="hl">Entnahme:</span> Über Minus. <span class="hl">ICP:</span> Sofort-Abzug (1 Stk).</p>
+        <h3>Statistik & Trend</h3>
+        <p>Die App speichert die letzten <span class="hl">12 Verbräuche</span> mit Datum. Unter "Statistik" siehst du den Verlauf und eine rote Trendlinie.</p>
+        <h3>Warnung</h3>
+        <p>Ein Produkt blinkt <span class="hl">rot</span>, wenn der Vorrat geringer ist als der Durchschnitt der letzten 5 Entnahmen.</p>
+        <h3>Import</h3>
+        <p>Kopiere Dosier-Tabellen einfach ein. Die App erkennt Kürzel (NaCl, F, Ni). Die Ziffer <span class="hl">"1"</span> wird als <span class="hl">Jod (I)</span> erkannt.</p>
         <div class="bug-section">
-            <h3 style="margin-top: 0; border: none;">🐞 Fehler melden & Support</h3>
-            <p>Sollten Sie auf Probleme stoßen oder Verbesserungsvorschläge haben, melden Sie diese bitte in unserem Bugtracker auf GitHub:</p>
-            <a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" class="bug-link">
-                Osci-Lager Bugreporting (GitHub)
-            </a>
+            <h3 style="border:none;">🐞 Bugreporting</h3>
+            <p>Probleme bitte hier melden:</p>
+            <a href="https://github.com/mwolf269-droid/osci-lager-repo/issues" target="_blank" style="color:var(--primary);">GitHub Issues</a>
         </div>
     </div>
 </body>
