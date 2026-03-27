@@ -19,7 +19,7 @@
         <div class="header-container"><img src="header.png" class="banner-img"></div>
         <nav class="top-nav">
             <a href="index.html" class="nav-link">← Zurück</a>
-            <select id="statProdSelect" onchange="renderStats()"></select>
+            <select id="statProdSelect" onchange="renderStats()"><option value="">Wähle Produkt...</option></select>
         </nav>
         <div class="stats-card">
             <h3 id="statTitle" style="color:var(--primary); margin:0;">Verbrauchsverlauf (Max 12)</h3>
@@ -34,12 +34,19 @@
         </div>
         <div class="footer-container"><img src="footer.png" class="footer-img"></div>
     </div>
-    <script src="config.js"></script><script src="core.js"></script>
+    <script src="config.js"></script>
+    <script src="core.js"></script>
+    <script src="ui.js"></script>
     <script>
         let myChart = null;
-        window.onload = async () => { await core.init(); fillDropdown(); renderStats(); };
+        window.onload = async () => { 
+            await core.init(); 
+            fillDropdown(); 
+            renderStats(); 
+        };
         function fillDropdown() {
             const sel = document.getElementById('statProdSelect');
+            sel.innerHTML = '<option value="">Wähle Produkt...</option>';
             for (let cat in productStructure) {
                 let g = document.createElement('optgroup'); g.label = cat;
                 for (let p in productStructure[cat]) {
@@ -61,12 +68,11 @@
             const history = (core.stockData[p]?.h || []);
             const labels = history.map(e => typeof e === 'object' ? e.t : '--');
             const values = history.map(e => typeof e === 'object' ? e.v : e);
-            const unit = productStructure[Object.keys(productStructure).find(c => productStructure[c][p])][p].u;
+            const unit = ui.getProdData(p).u;
             
             document.getElementById('statTableBody').innerHTML = history.slice().reverse().map((e, i) => {
                 const v = typeof e === 'object' ? e.v : e; const t = typeof e === 'object' ? e.t : '--';
-                const trend = i < history.length - 1 ? (v > (typeof history.slice().reverse()[i+1] === 'object' ? history.slice().reverse()[i+1].v : history.slice().reverse()[i+1]) ? '↑' : '↓') : '-';
-                return `<tr><td>${t}</td><td><b>${v} ${unit}</b></td><td>${trend}</td></tr>`;
+                return `<tr><td>${t}</td><td><b>${v} ${unit}</b></td><td>-</td></tr>`;
             }).join('');
 
             const ctx = document.getElementById('consumptionChart').getContext('2d');
