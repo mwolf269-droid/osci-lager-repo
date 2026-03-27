@@ -1,7 +1,6 @@
 const measuring = {
     fill() {
         const pSel = document.getElementById('prodSelect'); if (!pSel) return;
-        if (pSel.options.length > 1) return;
         pSel.innerHTML = '<option value="">Produkt wählen...</option>'; 
         for (const cat in productStructure) {
             let group = document.createElement('optgroup'); group.label = cat;
