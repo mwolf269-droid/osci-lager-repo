@@ -47,25 +47,18 @@ const ui = {
             let catCard = document.createElement('div'); catCard.className = 'cat-card';
             let html = `<div class="cat-header">${cat}</div><table>`;
             for (const p in productStructure[cat]) {
-                const pData = productStructure[cat][p]; 
-                const data = core.stockData[p] || { qty: 0, h: [] }; 
-                const sId = core.getSafeId(p);
+                const pData = productStructure[cat][p]; const data = core.stockData[p] || { qty: 0, h: [] }; const sId = core.getSafeId(p);
                 
-                // --- TREND LOGIK ---
+                // TREND LOGIK
                 const hVals = (data.h || []).map(e => typeof e === 'object' ? e.v : e);
                 let trendHtml = '';
                 if(hVals.length >= 2) {
                     const last = hVals[hVals.length - 1];
                     const prev = hVals[hVals.length - 2];
                     const diff = ((last - prev) / prev) * 100;
-                    
-                    if(diff > 5) { 
-                        trendHtml = `<span class="trend-icon up" title="Verbrauch steigend">↑</span>`; 
-                    } else if(diff < -5) { 
-                        trendHtml = `<span class="trend-icon down" title="Verbrauch sinkend">↓</span>`; 
-                    } else { 
-                        trendHtml = `<span class="trend-icon stable" title="Verbrauch gleichbleibend">→</span>`; 
-                    }
+                    if(diff > 5) trendHtml = `<span class="trend-icon up" title="Verbrauch steigend">↑</span>`;
+                    else if(diff < -5) trendHtml = `<span class="trend-icon down" title="Verbrauch sinkend">↓</span>`;
+                    else trendHtml = `<span class="trend-icon stable" title="Verbrauch gleichbleibend">→</span>`;
                 }
 
                 const last5 = (data.h || []).slice(-5).map(i => typeof i === 'object' ? i.v : i);
@@ -90,7 +83,11 @@ const ui = {
             }
             html += `</table>`; catCard.innerHTML = html; container.appendChild(catCard);
         }
-        if (window.measuring && typeof measuring.fill === 'function') measuring.fill();
+        
+        // BEFÜLLT DIE MESSSTATION GARANTIERT
+        if (typeof measuring !== 'undefined' && typeof measuring.fill === 'function') {
+            measuring.fill();
+        }
     },
 
     toggleHistory(sId) {
